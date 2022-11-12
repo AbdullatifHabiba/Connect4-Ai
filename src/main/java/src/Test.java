@@ -13,7 +13,7 @@ public class Test {
     public void user()
     {
 
-        StateNode node =GamePlay.userTurn(6,0);
+        StateNode node =GamePlay.userTurn(6,0,false);
         printMax(node.color, node.played);
         computer();
     }

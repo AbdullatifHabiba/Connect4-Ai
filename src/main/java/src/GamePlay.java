@@ -75,7 +75,8 @@ public class GamePlay {
         return new Pair(maxChild, maxVal);
     }
 
-    static StateNode userTurn(int k, int col) {
+    static StateNode userTurn(int k, int col,boolean alphaBeta) {
+        GamePlay.setChildrens(new ArrayList<>());
         if (moves == 42) return null;
         int ind = col; //index of playing comes from gui
 
