@@ -35,36 +35,6 @@ public class GamePlay {
         return new StateNode(s, ind, turn, colIndex); ///////////////////what inserted///////////////////////////////
     }
 
-    static Pair min(StateNode s, int k) {
-        if (k <= 0) return new Pair(s, utility(s));
-        int minVal = OO;
-        StateNode minChild = null;
-        ArrayList<StateNode> children = makeChildrenReady(s);
-        for (StateNode child : children) {
-            Pair p = max(child, k - 1);//////////////change/////////////
-            if (p.val < minVal) {
-                minVal = p.val;
-                minChild = p.state;
-            }
-        }
-        return new Pair(minChild, minVal);
-    }
-
-    static Pair max(StateNode s, int k) {
-        if (k <= 0) return new Pair(s, utility(s));
-        int maxVal = -OO;
-        StateNode maxChild = null;
-        ArrayList<StateNode> children = makeChildrenReady(s);
-        for (StateNode child : children) {
-            Pair p = min(child, k - 1);//////////////change/////////////
-            if (p.val > maxVal) {
-                maxVal = p.val;
-                maxChild = p.state;
-            }
-        }
-        return new Pair(maxChild, maxVal);
-    }
-
     static StateNode userTurn(int k, int col,boolean alphaBeta) {
         GamePlay.setChildren(new ArrayList<>());
         if (moves == 42) return null;
@@ -84,12 +54,12 @@ public class GamePlay {
         if (moves == 42)
             return null;
         long G = System.nanoTime();
-        Pair max = max(currentState, k);
+        StateNode max = AlphaBeta.decision(currentState, Math.min(k, 42 - moves));
         for (int i = 0; i < k - 1; i++) {
-            max.state = max.state.getParentNode();
+            max = max.getParentNode();
         }
-        max.state.setParentNode(currentState);
-        currentState = max.state;
+        max.setParentNode(currentState);
+        currentState = max;
         long G2 = System.nanoTime();
         System.out.println("Current Time in ms: " + (G2 - G) / 1000000);
         System.out.println("goooooooooooooooooooal");
@@ -132,39 +102,5 @@ public class GamePlay {
 
     public static ArrayList<ArrayList<StateNode>> getChildren() {
         return children;
-    }
-
-    Pair maximize(StateNode stateNode, double alpha, double beta, int k) {
-        if (k <= 0) return new Pair(stateNode, utility(stateNode));
-        Pair pair = new Pair(null, -1 * OO);
-        for (StateNode child : makeChildrenReady(stateNode)) {
-            int utility = minimize(child, alpha, beta, k - 1).val;
-            if (utility > pair.val)
-                pair = new Pair(child, utility);
-            if (pair.val >= beta)
-                break;
-            if (pair.val > alpha)
-                alpha = pair.val;
-        }
-        return pair;
-    }
-
-    Pair minimize(StateNode stateNode, double alpha, double beta, int k) {
-        if (k <= 0) return new Pair(stateNode, utility(stateNode));
-        Pair pair = new Pair(null, OO);
-        for (StateNode child : makeChildrenReady(stateNode)) {
-            int utility = maximize(child, alpha, beta, k - 1).val;
-            if (utility < pair.val)
-                pair = new Pair(child, utility);
-            if (pair.val <= alpha)
-                break;
-            if (pair.val < beta)
-                beta = pair.val;
-        }
-        return pair;
-    }
-
-    StateNode decision(StateNode stateNode, int k) {
-        return maximize(stateNode, -1 * OO, OO, k).state;
     }
 }
