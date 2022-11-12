@@ -1,25 +1,19 @@
 package src;
 
 
-import java.util.ArrayList;
-import java.util.Scanner;
-
 public class Test {
 
     public static void main(String[] args) {
 
         Test obj =new Test();
         GamePlay.currentState =new StateNode();
-        GamePlay.setChildrens(new ArrayList<>());
         obj.user();
 
     }
     public void user()
     {
-        Scanner src =new Scanner(System.in);
-        int col =src.nextInt();
-        StateNode node =GamePlay.userTurn(6,col);
 
+        StateNode node =GamePlay.userTurn(6,0);
         printMax(node.color, node.played);
         computer();
     }
