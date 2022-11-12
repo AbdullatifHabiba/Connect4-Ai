@@ -8,6 +8,8 @@ public class GamePlay {
     static int moves;
     static StateNode currentState;
 
+    private static ArrayList<ArrayList<StateNode>> childrens;
+
     static ArrayList<StateNode> makeChildrenReady(StateNode s) {
 
         ArrayList<StateNode> list = new ArrayList<>();
@@ -21,13 +23,14 @@ public class GamePlay {
                 list.add(node);
 
                 //////////////////////////////////////////////////////////////////
-               // print(list.get(j).color, list.get(j).played);
-              //  System.out.println();
+                // print(list.get(j).color, list.get(j).played);
+                //  System.out.println();
                 j++;
                 ////////////////////////////////////////////////////////////////////
 
             }
         }
+        childrens.add(list);
         return list;
     }
 
@@ -143,6 +146,10 @@ public class GamePlay {
             }
 
         }
+    }
+
+    public ArrayList<ArrayList<StateNode>> getChildrens() {
+        return childrens;
     }
 
 
