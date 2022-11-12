@@ -23,11 +23,11 @@ public class GameGui extends Application {
     @Override
     public void start(Stage stage) {
         stage.setTitle("Connect4");
-        Pane pane = new Pane();
+        GridPane pane = new GridPane();
         GridPane dashboard = new GridPane();
         GridPane Connect67 = new GridPane();
         Connect67.setPadding(new Insets(20, 20, 20, 20));
-        dashboard.setPadding(new Insets(20, 20, 20, 400));
+        dashboard.setPadding(new Insets(20, 20, 20, 20));
         Label Level = new Label("Level");
         TextField LevelVal = new TextField();
 
@@ -51,7 +51,7 @@ public class GameGui extends Application {
                 roundButton.setDisable(true);
                 bts.add(roundButton);
                 StackPane stack = new StackPane();
-                stack.getChildren().add(roundButton);
+               stack.getChildren().add(roundButton);
                 Connect67.add(stack, j, i);
                 int finalI = j;
                 roundButton.setOnAction(e -> {
@@ -84,16 +84,19 @@ public class GameGui extends Application {
 
 
         Button start = new Button("Start");
-        start.setStyle("-fx-background-color:coral;-fx-font-size:20px;");
-
+        start.setStyle("-fx-background-color:crimson;-fx-font-size:20px;");
+            start.setMinWidth(150);
         Button reset = new Button("Reset");
-        reset.setStyle("-fx-background-color:crimson;-fx-font-size:20px;");
+        reset.setStyle("-fx-background-color:coral;-fx-font-size:20px;");
+        reset.setMinWidth(150);
 
         Button trace = new Button("Trace");
         trace.setStyle("-fx-background-color:orange;-fx-font-size:20px;");
+        trace.setMinWidth(150);
 
         Button stop = new Button("Exit");
         stop.setStyle("-fx-background-color:red;-fx-font-size:20px;");
+        stop.setMinWidth(150);
 
         reset.setDisable(true);
         trace.setDisable(true);
@@ -114,43 +117,50 @@ public class GameGui extends Application {
 
         reset.setOnAction(event -> start(new Stage()));
         stop.setOnAction(event -> stage.close());
-        Pane pane2 = new Pane();
+        GridPane pane2 = new GridPane();
         TextArea textArea = new TextArea();
-        textArea.setMinHeight(1000);
-        textArea.setMinWidth(1000);
+        textArea.setMinHeight(500);
+        textArea.setMinWidth(500);
         textArea.setEditable(false);
 
 
         Button finish = new Button("Return");
-        pane2.getChildren().addAll(textArea, finish);
+        finish.setStyle("-fx-background-color:green;-fx-font-size:20px;");
+        finish.setMinWidth(150);
+        pane2.add(textArea,0,0);
+        pane2.add(finish,0,1);
         Scene scene2 = new Scene(pane2);
         trace.setOnAction(event -> {
-
+            textArea.setText("MINMAX");
 
             Stage stage2 = new Stage();
             stage2.setScene(scene2);
             stage2.show();
+            finish.setOnAction(e -> stage2.close());
+
         });
 
 
-        dashboard.add(start, 0, 8);
+        dashboard.add(start, 1, 6);
         dashboard.setHgap(5);
-        dashboard.add(trace, 1, 8);
+        dashboard.add(trace, 1, 7);
         dashboard.setVgap(8);
-        dashboard.add(Level, 0, 4);
+        dashboard.add(Level, 0, 2);
         dashboard.setHgap(5);
-        dashboard.add(LevelVal, 1, 4);
+        dashboard.add(LevelVal, 1, 2);
         dashboard.setVgap(8);
-        dashboard.add(chooseAlgorithm, 1, 6);
+        dashboard.add(chooseAlgorithm, 1, 4);
         dashboard.setHgap(5);
-        dashboard.add(stop, 2, 8);
+        dashboard.add(stop, 1, 9);
         dashboard.setVgap(8);
-        dashboard.add(reset, 3, 8);
-        Connect67.setMinSize(500, 400);
-        pane.getChildren().addAll(Connect67, dashboard);
+        dashboard.add(reset, 1, 8);
+
+
+        pane.add(Connect67,0,0);
+        pane.add(dashboard,1,0);
+
         Scene scene = new Scene(pane);
         stage.setScene(scene);
-        finish.setOnAction(event -> stage.setScene(scene));
         stage.show();
     }
 
