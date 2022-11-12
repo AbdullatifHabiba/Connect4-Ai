@@ -20,6 +20,9 @@ import java.util.ArrayList;
 public class GameGui extends Application {
 
 
+    TextArea textArea = new TextArea();
+
+
     @Override
     public void start(Stage stage) {
         stage.setTitle("Connect4");
@@ -31,15 +34,18 @@ public class GameGui extends Application {
         Label Level = new Label("Level");
         TextField LevelVal = new TextField();
         GridPane pane2 = new GridPane();
-        TextArea textArea = new TextArea();
-
+        Label red4 = new Label("Number of 4 Red :");
+        Label red4Val = new Label("0");
+        Label yellow4 = new Label("Number of 4 Yellow : ");
+        Label yellowVal = new Label("0");
+        yellowVal.setStyle("-fx-text-fill:rgb(17, 186, 216);");red4Val.setStyle("-fx-text-fill:rgb(17, 186, 216);");
         Button roundButton;
         ArrayList<Button>bts=new ArrayList<>();
         for (int i = 0; i < 6; i++) {
 
             for (int j = 0; j < 7; j++) {
 
-                roundButton = new Button();
+                 roundButton = new Button();
 
                 roundButton.setStyle(
                         "-fx-background-radius: 5em; " +
@@ -53,29 +59,35 @@ public class GameGui extends Application {
                 roundButton.setDisable(true);
                 bts.add(roundButton);
                 StackPane stack = new StackPane();
-                stack.getChildren().add(roundButton);
+               stack.getChildren().add(roundButton);
                 Connect67.add(stack, j, i);
                 int finalI = j;
 
 
                 roundButton.setOnAction(e -> {
                     GamePlay.currentState = new StateNode();
-                    ArrayList<ArrayList<StateNode>>list =user(Connect67, Integer.parseInt(LevelVal.getText()), finalI);
-                    list.forEach(state->{
-                        textArea.appendText("Level= "+(list.indexOf(state))+"\n");
-                        state.forEach(
-                                el->{
-                                    textArea.appendText("S= "+(state.indexOf(el))+"\n");
+                    GamePlay.setChildrens(new ArrayList<>());
+                   ArrayList<ArrayList<StateNode>>list =user(Connect67, Integer.parseInt(LevelVal.getText()), finalI,red4Val,yellowVal);
 
-                                    textArea.appendText(buildString(el.color,el.played) );
-                                });
-                    });
+                  list.forEach(state->{
+                      textArea.appendText("Level= "+(list.indexOf(state))+"\n");
+                      state.forEach(
+                              el->{
+                                  textArea.appendText("S= "+(state.indexOf(el))+"\n");
+
+                                  textArea.appendText(buildString(el.color,el.played) );
+                      });
+                  });
 
 
-                });
+
+                        }
+
+                );
                 stack.setStyle("-fx-background-color:blue;");
                 Connect67.setHgap(.25);
                 Connect67.setVgap(.25);
+
             }
         }
 
@@ -99,7 +111,7 @@ public class GameGui extends Application {
 
         Button start = new Button("Start");
         start.setStyle("-fx-background-color:crimson;-fx-font-size:20px;");
-        start.setMinWidth(150);
+            start.setMinWidth(150);
         Button reset = new Button("Reset");
         reset.setStyle("-fx-background-color:coral;-fx-font-size:20px;");
         reset.setMinWidth(150);
@@ -129,7 +141,7 @@ public class GameGui extends Application {
 
         });
 
-        reset.setOnAction(event -> start(new Stage()));
+        reset.setOnAction(event -> {start(new Stage());textArea.clear();});
         stop.setOnAction(event -> stage.close());
 
         textArea.setMinHeight(500);
@@ -168,8 +180,15 @@ public class GameGui extends Application {
         dashboard.add(reset, 1, 8);
 
 
+
         pane.add(Connect67,0,0);
         pane.add(dashboard,1,0);
+        pane.add(red4, 0, 1);
+        pane.setHgap(5);
+        pane.add(red4Val, 1, 1);
+        pane.add(yellow4, 0, 2);
+        pane.setHgap(5);
+        pane.add(yellowVal, 1, 2);
 
         Scene scene = new Scene(pane);
         stage.setScene(scene);
@@ -178,24 +197,28 @@ public class GameGui extends Application {
 
 
 
-    public ArrayList<ArrayList<StateNode>> user(GridPane board, int level, int col) {
+    public ArrayList<ArrayList<StateNode>> user(GridPane board, int level, int col,Label r,Label y) {
 
         StateNode node = GamePlay.userTurn(level, col);
-        Draw(board, node, level);
-        computer(board, level);
+        Draw(board, node, level,r,y);
+        r.setText(String.valueOf(node.getRedPoints()));
+        y.setText(String.valueOf(node.getYellowPoints()));
+
+        computer(board, level,r,y);
         return GamePlay.getChildrens();
     }
 
-    public void computer(GridPane board, int level) {
+
+
+    public void computer(GridPane board, int level,Label r,Label y) {
         StateNode node = GamePlay.myTurn(level);
-        //  for (int i = 0; i < node.color.length; i++) {
-        // System.out.print("[ " + node.color[i] + " , " + node.played[i] + " ]");
-        //}
-        Draw(board, node, level);
+        r.setText(String.valueOf(node.getRedPoints()));
+        y.setText(String.valueOf(node.getYellowPoints()));
+        Draw(board, node, level,r,y);
 
     }
 
-    private void Draw(GridPane board, StateNode stateNode, int level) {
+    private void Draw(GridPane board, StateNode stateNode, int level,Label r,Label y) {
         int k = 0;
         for (int i = 0; i < 6; i++) {
 
@@ -228,8 +251,17 @@ public class GameGui extends Application {
                 board.add(stack, j, 5 - i);
                 int finalI = j;
                 roundButton.setOnAction(e -> {
-                    System.out.println(level + "  " + finalI);
-                    user(board, level, finalI);
+                    ArrayList<ArrayList<StateNode>>list = user(board, level, finalI,r,y);
+                    textArea.clear();
+                    list.forEach(state->{
+                        textArea.appendText("Level= "+(list.indexOf(state))+"\n");
+                        state.forEach(
+                                el->{
+                                    textArea.appendText("S= "+(state.indexOf(el))+"\n");
+
+                                    textArea.appendText(buildString(el.color,el.played) );
+                                });
+                    });
 
                 });
                 stack.setStyle("-fx-background-color:blue;");
@@ -240,7 +272,7 @@ public class GameGui extends Application {
     }
     public static String buildString(boolean[] arr,boolean[] played)
     {
-        StringBuilder stringBuilder=new StringBuilder();
+          StringBuilder stringBuilder=new StringBuilder();
         for(int i=arr.length-1;i>=0;i--)
         {
             if(arr[i]  && played[i])
