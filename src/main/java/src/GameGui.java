@@ -30,6 +30,8 @@ public class GameGui extends Application {
         dashboard.setPadding(new Insets(20, 20, 20, 20));
         Label Level = new Label("Level");
         TextField LevelVal = new TextField();
+        GridPane pane2 = new GridPane();
+        TextArea textArea = new TextArea();
 
         Button roundButton;
         ArrayList<Button>bts=new ArrayList<>();
@@ -37,7 +39,7 @@ public class GameGui extends Application {
 
             for (int j = 0; j < 7; j++) {
 
-                 roundButton = new Button();
+                roundButton = new Button();
 
                 roundButton.setStyle(
                         "-fx-background-radius: 5em; " +
@@ -51,12 +53,24 @@ public class GameGui extends Application {
                 roundButton.setDisable(true);
                 bts.add(roundButton);
                 StackPane stack = new StackPane();
-               stack.getChildren().add(roundButton);
+                stack.getChildren().add(roundButton);
                 Connect67.add(stack, j, i);
                 int finalI = j;
+
+
                 roundButton.setOnAction(e -> {
                     GamePlay.currentState = new StateNode();
-                    user(Connect67, Integer.parseInt(LevelVal.getText()), finalI);
+                    ArrayList<ArrayList<StateNode>>list =user(Connect67, Integer.parseInt(LevelVal.getText()), finalI);
+                    list.forEach(state->{
+                        textArea.appendText("Level= "+(list.indexOf(state))+"\n");
+                        state.forEach(
+                                el->{
+                                    textArea.appendText("S= "+(state.indexOf(el))+"\n");
+
+                                    textArea.appendText(buildString(el.color,el.played) );
+                                });
+                    });
+
 
                 });
                 stack.setStyle("-fx-background-color:blue;");
@@ -85,7 +99,7 @@ public class GameGui extends Application {
 
         Button start = new Button("Start");
         start.setStyle("-fx-background-color:crimson;-fx-font-size:20px;");
-            start.setMinWidth(150);
+        start.setMinWidth(150);
         Button reset = new Button("Reset");
         reset.setStyle("-fx-background-color:coral;-fx-font-size:20px;");
         reset.setMinWidth(150);
@@ -117,8 +131,7 @@ public class GameGui extends Application {
 
         reset.setOnAction(event -> start(new Stage()));
         stop.setOnAction(event -> stage.close());
-        GridPane pane2 = new GridPane();
-        TextArea textArea = new TextArea();
+
         textArea.setMinHeight(500);
         textArea.setMinWidth(500);
         textArea.setEditable(false);
@@ -131,7 +144,6 @@ public class GameGui extends Application {
         pane2.add(finish,0,1);
         Scene scene2 = new Scene(pane2);
         trace.setOnAction(event -> {
-            textArea.setText("MINMAX");
 
             Stage stage2 = new Stage();
             stage2.setScene(scene2);
@@ -166,17 +178,18 @@ public class GameGui extends Application {
 
 
 
-    public void user(GridPane board, int level, int col) {
+    public ArrayList<ArrayList<StateNode>> user(GridPane board, int level, int col) {
 
         StateNode node = GamePlay.userTurn(level, col);
         Draw(board, node, level);
         computer(board, level);
+        return GamePlay.getChildrens();
     }
 
     public void computer(GridPane board, int level) {
         StateNode node = GamePlay.myTurn(level);
-      //  for (int i = 0; i < node.color.length; i++) {
-           // System.out.print("[ " + node.color[i] + " , " + node.played[i] + " ]");
+        //  for (int i = 0; i < node.color.length; i++) {
+        // System.out.print("[ " + node.color[i] + " , " + node.played[i] + " ]");
         //}
         Draw(board, node, level);
 
@@ -224,6 +237,31 @@ public class GameGui extends Application {
                 board.setVgap(.25);
             }
         }
+    }
+    public static String buildString(boolean[] arr,boolean[] played)
+    {
+        StringBuilder stringBuilder=new StringBuilder();
+        for(int i=arr.length-1;i>=0;i--)
+        {
+            if(arr[i]  && played[i])
+            {
+                stringBuilder.append(1);
+            }
+            else if(!arr[i]  && played[i])
+            {
+                stringBuilder.append(0);
+
+            }else{
+                stringBuilder.append("-");
+
+            }
+            if(i%7==0 )
+            {
+                stringBuilder.append("\n");
+            }
+
+        }
+        return stringBuilder.toString();
     }
 
     public static void main(String[] args) {

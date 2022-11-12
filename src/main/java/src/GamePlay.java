@@ -8,7 +8,7 @@ public class GamePlay {
     static int moves;
     static StateNode currentState;
 
-    private static ArrayList<ArrayList<StateNode>> childrens;
+    private static ArrayList<ArrayList<StateNode>> childrens=new ArrayList<>();
 
     static ArrayList<StateNode> makeChildrenReady(StateNode s) {
 
@@ -111,6 +111,7 @@ public class GamePlay {
         moves++;
         currentState.calculatePoints();/////////////////////////why 0 /////////////////////
         System.out.println("Number of 4 Yellow: " + currentState.getYellowPoints());
+        System.out.println("Number of 4 Red: " + currentState.getRedPoints());
         return currentState;
     }
 
@@ -148,8 +149,11 @@ public class GamePlay {
         }
     }
 
-    public ArrayList<ArrayList<StateNode>> getChildrens() {
+    public static ArrayList<ArrayList<StateNode>> getChildrens() {
         return childrens;
+    }
+    public static void setChildrens(ArrayList<ArrayList<StateNode>> child) {
+        childrens =child;
     }
 
 

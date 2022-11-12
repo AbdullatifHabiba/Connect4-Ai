@@ -16,7 +16,6 @@ public class StateNode {
         // 6 * 7
         played = new boolean[42];
         color = new boolean[42];
-        //children = new ArrayList<StateNode>(7);
     }
 
     public StateNode(StateNode parent, int indexOfPlay, boolean turn,int colIndx) {
@@ -32,6 +31,8 @@ public class StateNode {
         MinOrMax=turn;
         topArr= new ArrayList<>(parent.topArr);
         topArr.set(colIndx,parent.getTopArr().get(colIndx)-1);
+        this.redPoints =parent.redPoints;
+        this.yellowPoints=parent.yellowPoints;
     }
 
     void calculatePoints() {
