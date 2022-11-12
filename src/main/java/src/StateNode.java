@@ -3,11 +3,11 @@ package src;
 import java.util.ArrayList;
 
 public class StateNode {
+    boolean[] played;  // should private
+    boolean[] color;
     private StateNode parentNode;
     private byte redPoints;
     private byte yellowPoints;
-    boolean[] played;  // should private
-    boolean[] color;
     private ArrayList<Integer> topArr;
     private boolean MinOrMax;
     private int lastIndexPlayed;
@@ -18,25 +18,25 @@ public class StateNode {
         color = new boolean[42];
     }
 
-    public StateNode(StateNode parent, int indexOfPlay, boolean turn,int colIndx) {
+    public StateNode(StateNode parent, int indexOfPlay, boolean turn, int colIndex) {
         this();
-        this.parentNode=parent;
+        this.parentNode = parent;
         for (int i = 0; i < 42; i++) {
             played[i] = parent.played[i];
             color[i] = parent.color[i];
         }
-        this.lastIndexPlayed=indexOfPlay;
+        this.lastIndexPlayed = indexOfPlay;
         played[indexOfPlay] = true;
         color[indexOfPlay] = turn;
-        MinOrMax=turn;
-        topArr= new ArrayList<>(parent.topArr);
-        topArr.set(colIndx,parent.getTopArr().get(colIndx)-1);
-        this.redPoints =parent.redPoints;
-        this.yellowPoints=parent.yellowPoints;
+        MinOrMax = turn;
+        topArr = new ArrayList<>(parent.topArr);
+        topArr.set(colIndex, parent.getTopArr().get(colIndex) - 1);
+        this.redPoints = parent.redPoints;
+        this.yellowPoints = parent.yellowPoints;
     }
 
     void calculatePoints() {
-        int indexOfPlay=this.lastIndexPlayed;
+        int indexOfPlay = this.lastIndexPlayed;
         int left = 0;
         int right = 0;
         int up = 0;
@@ -51,17 +51,15 @@ public class StateNode {
         while (p < 42 && i < 3 && this.played[p] && this.color[p] == this.color[indexOfPlay]) {
             p += 7;
             i++;
-            up ++;
+            up++;
         }
         // down
         p = indexOfPlay - 7;
         i = 0;
-
-        ////////////////////////////////////////////////////change here ////////////////////
-        while (p>=0 && p >= 0 && i < 3 && this.played[p] && this.color[p] == this.color[indexOfPlay]) {
+        while (p >= 0 && p >= 0 && i < 3 && this.played[p] && this.color[p] == this.color[indexOfPlay]) {
             p -= 7;
             i++;
-            down ++;
+            down++;
         }
         // right
         p = indexOfPlay + 1;
@@ -69,15 +67,15 @@ public class StateNode {
         while (p / 7 == indexOfPlay / 7 && i < 3 && this.played[p] && this.color[p] == this.color[indexOfPlay]) {
             p += 1;
             i++;
-            right ++;
+            right++;
         }
         p = indexOfPlay - 1;
         i = 0;
         // left
-        while (p>=0 && p / 7 == indexOfPlay / 7 && i < 3 && this.played[p] && this.color[p] == this.color[indexOfPlay]) {
+        while (p >= 0 && p / 7 == indexOfPlay / 7 && i < 3 && this.played[p] && this.color[p] == this.color[indexOfPlay]) {
             p -= 1;
             i++;
-            left ++;
+            left++;
         }
         // up left
         p = indexOfPlay + 6;
@@ -85,7 +83,7 @@ public class StateNode {
         while (p < 42 && p % 7 != 6 && i < 3 && this.played[p] && this.color[p] == this.color[indexOfPlay]) {
             p += 6;
             i++;
-            upLeft ++;
+            upLeft++;
         }
         // up right
         p = indexOfPlay + 8;
@@ -93,55 +91,51 @@ public class StateNode {
         while (p < 42 && p % 7 != 0 && i < 3 && this.played[p] && this.color[p] == this.color[indexOfPlay]) {
             p += 8;
             i++;
-            upRight ++;
+            upRight++;
         }
         // down left
         p = indexOfPlay - 8;
         i = 0;
-        while (p>=0 && p < 42 && p % 7 != 6 && i < 3 && this.played[p] && this.color[p] == this.color[indexOfPlay]) {
+        while (p >= 0 && p < 42 && p % 7 != 6 && i < 3 && this.played[p] && this.color[p] == this.color[indexOfPlay]) {
             p -= 8;
             i++;
-            downLeft ++;
+            downLeft++;
         }
         // down right
         p = indexOfPlay - 6;
         i = 0;
-        while (p>=0 && p < 42 && p % 7 != 0 && i < 3 && this.played[p] && this.color[p] == this.color[indexOfPlay]) {
+        while (p >= 0 && p < 42 && p % 7 != 0 && i < 3 && this.played[p] && this.color[p] == this.color[indexOfPlay]) {
             p -= 6;
             i++;
-            downRight ++;
+            downRight++;
         }
-        int points = Math.max(0, up + down - 2) + Math.max(0, right + left - 2)
-                + Math.max(0, upRight + downLeft - 2) + Math.max(0, upLeft + downRight - 2);
-        if (color[indexOfPlay])
-            redPoints += points;
-        else
-            yellowPoints += points;
+        int points = Math.max(0, up + down - 2) + Math.max(0, right + left - 2) + Math.max(0, upRight + downLeft - 2) + Math.max(0, upLeft + downRight - 2);
+        if (color[indexOfPlay]) redPoints += points;
+        else yellowPoints += points;
     }
-    public ArrayList<Integer> getTopArr()
-    {
-        return
-                this.topArr;
+
+    public ArrayList<Integer> getTopArr() {
+        return this.topArr;
     }
-    public void setTopArr(ArrayList<Integer> list)
-    {
-        this.topArr=list;
+
+    public void setTopArr(ArrayList<Integer> list) {
+        this.topArr = list;
     }
-    public void setTurn(boolean turn)
-    {
-        this.MinOrMax=turn;
-    }
-    public boolean getTurn()
-    {
+
+    public boolean getTurn() {
         return this.MinOrMax;
     }
-    public StateNode getParentNode()
-    {
+
+    public void setTurn(boolean turn) {
+        this.MinOrMax = turn;
+    }
+
+    public StateNode getParentNode() {
         return this.parentNode;
     }
-    public void setParentNode(StateNode node)
-    {
-        this.parentNode=node;
+
+    public void setParentNode(StateNode node) {
+        this.parentNode = node;
     }
 
     public byte getRedPoints() {
@@ -159,6 +153,7 @@ public class StateNode {
     public void setYellowPoints(byte yellowPoints) {
         this.yellowPoints = yellowPoints;
     }
+
     public int getLastIndexPlayed() {
         return lastIndexPlayed;
     }
