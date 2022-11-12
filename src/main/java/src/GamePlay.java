@@ -21,8 +21,8 @@ public class GamePlay {
                 list.add(node);
 
                 //////////////////////////////////////////////////////////////////
-                print(list.get(j).color, list.get(j).played);
-                System.out.println();
+               // print(list.get(j).color, list.get(j).played);
+              //  System.out.println();
                 j++;
                 ////////////////////////////////////////////////////////////////////
 
@@ -81,7 +81,7 @@ public class GamePlay {
         currentState.calculatePoints(); // can be exchanged with method in stateNode class changes it
         ////////////////////////////////////////////////////////////
         // print(s.color,s.played);
-        System.out.println(s.getRedPoints());
+        System.out.println("Number of 4 red: " + s.getRedPoints());
         ///////////////////////////////////////////////////////
         return currentState;
     }
