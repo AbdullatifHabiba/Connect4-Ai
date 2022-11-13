@@ -5,8 +5,13 @@ public class Heuristic {
 
     public int calculateHeuristic(StateNode s) {
         setHeuristic();
+<<<<<<< Updated upstream
         int yellowAddedPoints =  (s.getYellowPoints() - s.getParentNode().getYellowPoints());
         int redAddedPoints =  (s.getRedPoints() - s.getParentNode().getRedPoints());
+=======
+        int yellowAddedPoints = (s.getYellowPoints() - s.getParentNode().getYellowPoints());
+        int redAddedPoints = (s.getRedPoints() - s.getParentNode().getRedPoints());
+>>>>>>> Stashed changes
         if (!s.color[s.getLastIndexPlayed()]) {
             return (heuristicArr[s.getLastIndexPlayed()] + 2 * (yellowAddedPoints - redAddedPoints));
         } else {
