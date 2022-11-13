@@ -11,7 +11,6 @@ public class MinMax {
         StateNode minChild = null;
         // get children
         ArrayList<StateNode> children = GamePlay.makeChildrenReady(s);
-        moveNum++;
         for (StateNode child : children) {
             Pair p = max(child, k - 1, moveNum + 1);
             if (p.val < minVal) {
@@ -28,7 +27,6 @@ public class MinMax {
         StateNode maxChild = null;
         // get children
         ArrayList<StateNode> children = GamePlay.makeChildrenReady(s);
-        moveNum++;
         for (StateNode child : children) {
             Pair p = min(child, k - 1, moveNum + 1);
             if (p.val > maxVal) {
