@@ -12,42 +12,43 @@ public class Test {
         GamePlay.currentState =new StateNode();
         GamePlay.setChildrens(new ArrayList<>());
         obj.user();
+//        ArrayList<ArrayList<Integer>> child =new ArrayList<>();ArrayList<Integer> child2 =new ArrayList<>();
+//        child.add(child2);
+//        System.out.println(child);
 
     }
     public void user()
     {
         Scanner src =new Scanner(System.in);
         int col =src.nextInt();
-        StateNode node =GamePlay.userTurn(6,col);
-
+        StateNode node =GamePlay.userTurn(3,col);
         printMax(node.color, node.played);
         computer();
     }
     public void computer()
     {
-        StateNode node =GamePlay.myTurn(6);
+        StateNode node =GamePlay.myTurn(3 ,false);
         printMax(node.color, node.played);
         user();
     }
     public static void printMax(boolean[] arr,boolean[] played)
     {
-        for(int i=arr.length-1;i>=0;i--)
+        for(int i=arr.length-1;i>=0;i=i-7)
         {
-            if(arr[i]  && played[i])
+            for(int j=i-6;j<=i;j++)
             {
-                System.out.print(1);
+                if(arr[j]  && played[j])
+                {
+                    System.out.print(1);
+                }
+                else if(!arr[j]  && played[j])
+                {
+                    System.out.print(0);
+                }else{
+                    System.out.print("-");
+                }
             }
-            else if(!arr[i]  && played[i])
-            {
-                System.out.print(0);
-            }else{
-                System.out.print("-");
-            }
-            if(i%7==0)
-            {
-                System.out.println();
-            }
-
+            System.out.println();
         }
     }
 }
