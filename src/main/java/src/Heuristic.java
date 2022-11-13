@@ -8,9 +8,9 @@ public class Heuristic {
         int yellowAddedPoints =  (s.getYellowPoints() - s.getParentNode().getYellowPoints());
         int redAddedPoints =  (s.getRedPoints() - s.getParentNode().getRedPoints());
         if (!s.color[s.getLastIndexPlayed()]) {
-            return (heuristicArr[s.getLastIndexPlayed()] + 2 * yellowAddedPoints);
+            return (heuristicArr[s.getLastIndexPlayed()] + 3 * yellowAddedPoints);
         } else {
-            return -1 * (heuristicArr[s.getLastIndexPlayed()] + 2 * redAddedPoints);
+            return -1 * (heuristicArr[s.getLastIndexPlayed()] + 3 * redAddedPoints);
         }
     }
 
