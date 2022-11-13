@@ -30,13 +30,13 @@ public class GamePlay {
         System.out.println("Number " + moves);
         if (moves == 42) return null;
         int ind = col; //index of playing comes from gui
-
         if (currentState.getTopArr() == null) {
             currentState.setTopArr(new ArrayList<>(Arrays.asList(5, 5, 5, 5, 5, 5, 5)));
         }
         StateNode s = playTurn(currentState, true, 7 * (5 - currentState.getTopArr().get(ind)) + ind, ind);
         currentState = s;
         moves++;
+        currentState.calculatePoints(); // can be exchanged with method in stateNode class changes it
         return currentState;
     }
 
@@ -58,15 +58,11 @@ public class GamePlay {
         System.out.println("Current Time in ms: " + (G2 - G) / 1000000);
         System.out.println("goooooooooooooooooooal");
         moves++;
+        currentState.calculatePoints();/////////////////////////why 0 /////////////////////
         System.out.println("Number of 4 Yellow: " + currentState.getYellowPoints());
         System.out.println("Number of 4 Red: " + currentState.getRedPoints());
         System.out.println("Number computer " + moves);
         return currentState;
-    }
-
-    static int utility(StateNode s) {
-        Heuristic obj = new Heuristic();
-        return obj.calculateHeuristic(s);
     }
 
     public static void print(boolean[] arr, boolean[] played) {
@@ -84,11 +80,17 @@ public class GamePlay {
         }
     }
 
+    public static int utility(StateNode s) {
+        Heuristic obj = new Heuristic();
+        return obj.calculateHeuristic(s);
+
+    }
+
     public static ArrayList<ArrayList<StateNode>> getChildren() {
         return children;
     }
 
-    public static void setChildren(ArrayList<ArrayList<StateNode>> children) {
-        GamePlay.children = children;
+    public static void setChildren(ArrayList<ArrayList<StateNode>> child) {
+        children = child;
     }
 }

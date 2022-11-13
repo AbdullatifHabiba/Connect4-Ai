@@ -1,10 +1,6 @@
 package src;
 
-<<<<<<< Updated upstream
 public class Pair {
-=======
-class Pair {
->>>>>>> Stashed changes
     int val;
     StateNode state;
 

@@ -1,12 +1,9 @@
 package src;
 
 import java.util.ArrayList;
-
-import static src.GamePlay.utility;
+import static src.GamePlay.*;
 
 public class MinMax {
-
-    final static int OO = (int) 1e9;
 
     public static Pair min(StateNode s, int k, int moveNum) {
         if (k <= 0 || moveNum == 42) return new Pair(s, utility(s));
