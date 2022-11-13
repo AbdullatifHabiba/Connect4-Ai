@@ -20,6 +20,7 @@ public class GameGui extends Application {
 
     TextArea textArea = new TextArea();
     boolean alphaBeta=false;
+    ArrayList<ArrayList<StateNode>> Levels=new ArrayList<>();
 
 
 
@@ -46,7 +47,7 @@ public class GameGui extends Application {
 
             for (int j = 0; j < 7; j++) {
 
-                 roundButton = new Button();
+                roundButton = new Button();
 
                 roundButton.setStyle(
                         "-fx-background-radius: 5em; " +
@@ -60,7 +61,7 @@ public class GameGui extends Application {
                 roundButton.setDisable(true);
                 bts.add(roundButton);
                 StackPane stack = new StackPane();
-               stack.getChildren().add(roundButton);
+                stack.getChildren().add(roundButton);
                 Connect67.add(stack, j, i);
                 int finalI = j;
 
@@ -68,17 +69,8 @@ public class GameGui extends Application {
                 roundButton.setOnAction(e -> {
                             GamePlay.currentState = new StateNode();
                             GamePlay.setChildrens(new ArrayList<>());
-                            ArrayList<ArrayList<StateNode>> list = user(Connect67, Integer.parseInt(LevelVal.getText()), finalI, red4Val, yellowVal);
+                       user(Connect67, Integer.parseInt(LevelVal.getText()), finalI, red4Val, yellowVal);
 
-                            list.forEach(state -> {
-                                textArea.appendText("Level= " + (list.indexOf(state)) + "\n");
-                                state.forEach(
-                                        el -> {
-                                            textArea.appendText("S= " + (state.indexOf(el)) + "\n");
-
-                                            textArea.appendText(buildString(el.color, el.played));
-                                        });
-                            });
                         }
 
                 );
@@ -109,7 +101,7 @@ public class GameGui extends Application {
 
         Button start = new Button("Start");
         start.setStyle("-fx-background-color:crimson;-fx-font-size:20px;");
-            start.setMinWidth(150);
+        start.setMinWidth(150);
         Button reset = new Button("Reset");
         reset.setStyle("-fx-background-color:coral;-fx-font-size:20px;");
         reset.setMinWidth(150);
@@ -162,7 +154,7 @@ public class GameGui extends Application {
         pane2.add(finish, 0, 1);
         Scene scene2 = new Scene(pane2);
         trace.setOnAction(event -> {
-
+            maketrace();
             Stage stage2 = new Stage();
             stage2.setScene(scene2);
             stage2.show();
@@ -198,7 +190,19 @@ public class GameGui extends Application {
         stage.show();
     }
 
-    public ArrayList<ArrayList<StateNode>> user(GridPane board, int level, int col, Label r, Label y) {
+    private void maketrace() {
+        Levels.forEach(state -> {
+            textArea.appendText("Level= " + (Levels.indexOf(state)) + "\n");
+            state.forEach(
+                    el -> {
+                        textArea.appendText("S= " + (state.indexOf(el)) + "\n");
+
+                        textArea.appendText(buildString(el.color, el.played));
+                    });
+        });
+    }
+
+    public void user(GridPane board, int level, int col, Label r, Label y) {
 
         StateNode node = GamePlay.userTurn(level, col);
         Draw(board, node, level, r, y);
@@ -206,7 +210,7 @@ public class GameGui extends Application {
         y.setText(String.valueOf(node.getYellowPoints()));
 
         computer(board, level, r, y);
-        return GamePlay.getChildrens();
+        Levels.addAll( GamePlay.getChildrens());
     }
 
 
@@ -252,17 +256,9 @@ public class GameGui extends Application {
                 board.add(stack, j, 5 - i);
                 int finalI = j;
                 roundButton.setOnAction(e -> {
-                 ArrayList<ArrayList<StateNode>> list = user(board, level, finalI, r, y);
+                    user(board, level, finalI, r, y);
                     //textArea.clear();
-                    list.forEach(state -> {
-                        textArea.appendText("Level= " + (list.indexOf(state)) + "\n");
-                        state.forEach(
-                                el -> {
-                                    textArea.appendText("S= " + (state.indexOf(el)) + "\n");
 
-                                    textArea.appendText(buildString(el.color, el.played));
-                                });
-                    });
 
                 });
                 stack.setStyle("-fx-background-color:blue;");
