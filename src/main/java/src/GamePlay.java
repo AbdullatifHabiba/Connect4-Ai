@@ -7,8 +7,7 @@ public class GamePlay {
     static int moves;
     static StateNode currentState;
     final static int OO = (int) 1e9;
-
-    private static ArrayList<ArrayList<StateNode>> childrens=new ArrayList<>();
+    private static ArrayList<ArrayList<StateNode>> childrens;
 
     static ArrayList<StateNode> makeChildrenReady(StateNode s) {
 
@@ -100,10 +99,13 @@ public class GamePlay {
 
         return childrens;
     }
+
     public static void setChildrens(ArrayList<ArrayList<StateNode>> child) {
 
         childrens =child;
     }
+
+
 
 
 }
