@@ -33,6 +33,7 @@ public class StateNode {
         topArr.set(colIndex, parent.getTopArr().get(colIndex) - 1);
         this.redPoints = parent.redPoints;
         this.yellowPoints = parent.yellowPoints;
+        this.calculatePoints();
     }
 
     void calculatePoints() {

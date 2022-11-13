@@ -13,24 +13,25 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 
+
 public class GameGui extends Application {
 
     TextArea textArea = new TextArea();
-    boolean alphaBeta = false;
+    boolean alphaBeta = true;
 
     public static String buildString(boolean[] arr, boolean[] played) {
         StringBuilder stringBuilder = new StringBuilder();
-        for (int i = arr.length - 1; i >= 0; i--) {
-            if (arr[i] && played[i]) {
-                stringBuilder.append(1);
-            } else if (!arr[i] && played[i]) {
-                stringBuilder.append(0);
-            } else {
-                stringBuilder.append("-");
+        for (int i = arr.length - 1; i >= 0; i = i - 7) {
+            for (int j = i - 6; j <= i; j++) {
+                if (arr[j] && played[j]) {
+                    stringBuilder.append(" 1 ");
+                } else if (!arr[j] && played[j]) {
+                    stringBuilder.append(" 0 ");
+                } else {
+                    stringBuilder.append(" - ");
+                }
             }
-            if (i % 7 == 0) {
-                stringBuilder.append("\n");
-            }
+            stringBuilder.append("\n");
         }
         return stringBuilder.toString();
     }
@@ -59,16 +60,12 @@ public class GameGui extends Application {
         Button roundButton;
         ArrayList<Button> bts = new ArrayList<>();
         for (int i = 0; i < 6; i++) {
+
             for (int j = 0; j < 7; j++) {
+
                 roundButton = new Button();
-                roundButton.setStyle(
-                        "-fx-background-radius: 5em; " +
-                                "-fx-min-width: 50px; " +
-                                "-fx-min-height: 50px; " +
-                                "-fx-max-width: 50px; " +
-                                "-fx-max-height: 50px;" +
-                                "-fx-background-color: white; -fx-stroke: black; -fx-stroke-width: 2;"
-                );
+
+                roundButton.setStyle("-fx-background-radius: 5em; " + "-fx-min-width: 50px; " + "-fx-min-height: 50px; " + "-fx-max-width: 50px; " + "-fx-max-height: 50px;" + "-fx-background-color: white; -fx-stroke: black; -fx-stroke-width: 2;");
                 roundButton.setId("roundedButton");
                 roundButton.setDisable(true);
                 bts.add(roundButton);
@@ -76,34 +73,38 @@ public class GameGui extends Application {
                 stack.getChildren().add(roundButton);
                 Connect67.add(stack, j, i);
                 int finalI = j;
+
+
                 roundButton.setOnAction(e -> {
                             GamePlay.currentState = new StateNode();
                             GamePlay.setChildren(new ArrayList<>());
                             ArrayList<ArrayList<StateNode>> list = user(Connect67, Integer.parseInt(LevelVal.getText()), finalI, red4Val, yellowVal);
+
                             list.forEach(state -> {
                                 textArea.appendText("Level= " + (list.indexOf(state)) + "\n");
-                                state.forEach(
-                                        el -> {
-                                            textArea.appendText("S= " + (state.indexOf(el)) + "\n");
-                                            textArea.appendText(buildString(el.color, el.played));
-                                        });
+                                state.forEach(el -> {
+                                    textArea.appendText("S= " + (state.indexOf(el)) + "\n");
+
+                                    textArea.appendText(buildString(el.color, el.played));
+                                });
                             });
                         }
+
                 );
                 stack.setStyle("-fx-background-color:blue;");
                 Connect67.setHgap(.25);
                 Connect67.setVgap(.25);
+
             }
         }
 
-        ChoiceBox chooseAlgorithm = new ChoiceBox<String>(
-                FXCollections.observableArrayList("without alpha-beta pruning", "with alpha-beta pruning"));
+
+        ChoiceBox chooseAlgorithm = new ChoiceBox<String>(FXCollections.observableArrayList("without alpha-beta pruning", "with alpha-beta pruning"));
         chooseAlgorithm.setValue("without alpha-beta pruning");
         Platform.runLater(() -> {
             SkinBase<ChoiceBox<String>> skin = (SkinBase<ChoiceBox<String>>) chooseAlgorithm.getSkin();
             for (Node child : skin.getChildren()) {
-                if (child instanceof Label) {
-                    Label label = (Label) child;
+                if (child instanceof Label label) {
                     if (label.getText().isEmpty()) {
                         label.setText("Choose MinMax");
                     }
@@ -111,28 +112,35 @@ public class GameGui extends Application {
                 }
             }
         });
+
+
         Button start = new Button("Start");
         start.setStyle("-fx-background-color:crimson;-fx-font-size:20px;");
         start.setMinWidth(150);
         Button reset = new Button("Reset");
         reset.setStyle("-fx-background-color:coral;-fx-font-size:20px;");
         reset.setMinWidth(150);
+
         Button trace = new Button("Trace");
         trace.setStyle("-fx-background-color:orange;-fx-font-size:20px;");
         trace.setMinWidth(150);
+
         Button stop = new Button("Exit");
         stop.setStyle("-fx-background-color:red;-fx-font-size:20px;");
         stop.setMinWidth(150);
+
         reset.setDisable(true);
         trace.setDisable(true);
         stop.setDisable(false);
+
+
         start.setOnAction(event -> {
             if (!LevelVal.getText().matches("[0-8]+")) {
                 new Alert(Alert.AlertType.ERROR, "Enter Valid Level integer number >= 0 ").show();
                 return;
             }
-            String minMax = chooseAlgorithm.getValue().toString();
-            alphaBeta = minMax.equals("with alpha-beta pruning");
+            String minmax = chooseAlgorithm.getValue().toString();
+            alphaBeta = minmax.equals("with alpha-beta pruning");
             bts.forEach(b -> b.setDisable(false));
             reset.setDisable(false);
             trace.setDisable(false);
@@ -140,11 +148,13 @@ public class GameGui extends Application {
             chooseAlgorithm.setDisable(true);
             LevelVal.setDisable(true);
         });
+
         reset.setOnAction(event -> {
             stage.close();
             start(new Stage());
             textArea.clear();
         });
+
         stop.setOnAction(event -> stage.close());
         textArea.setMinHeight(500);
         textArea.setMinWidth(500);
@@ -188,7 +198,7 @@ public class GameGui extends Application {
     }
 
     public ArrayList<ArrayList<StateNode>> user(GridPane board, int level, int col, Label r, Label y) {
-        StateNode node = GamePlay.userTurn(level, col, alphaBeta);
+        StateNode node = GamePlay.userTurn(col);
         Draw(board, node, level, r, y);
         r.setText(String.valueOf(node.getRedPoints()));
         y.setText(String.valueOf(node.getYellowPoints()));
@@ -197,7 +207,7 @@ public class GameGui extends Application {
     }
 
     public void computer(GridPane board, int level, Label r, Label y) {
-        StateNode node = GamePlay.myTurn(level);
+        StateNode node = GamePlay.myTurn(level, alphaBeta);
         r.setText(String.valueOf(node.getRedPoints()));
         y.setText(String.valueOf(node.getYellowPoints()));
         Draw(board, node, level, r, y);
@@ -211,21 +221,13 @@ public class GameGui extends Application {
                 String color;
                 if (stateNode.color[k] && stateNode.played[k]) {
                     color = "red";
-
                 } else if (!stateNode.color[k] && stateNode.played[k]) {
                     color = "yellow";
                 } else {
                     color = "white";
                 }
                 k++;
-                roundButton.setStyle(
-                        "-fx-background-radius: 5em; " +
-                                "-fx-min-width: 50px; " +
-                                "-fx-min-height: 50px; " +
-                                "-fx-max-width: 50px; " +
-                                "-fx-max-height: 50px;" +
-                                " -fx-stroke: black; -fx-stroke-width: 2;" +
-                                "-fx-background-color:" + color + ";");
+                roundButton.setStyle("-fx-background-radius: 5em; " + "-fx-min-width: 50px; " + "-fx-min-height: 50px; " + "-fx-max-width: 50px; " + "-fx-max-height: 50px;" + " -fx-stroke: black; -fx-stroke-width: 2;" + "-fx-background-color:" + color + ";");
                 roundButton.setId("roundedButton");
                 StackPane stack = new StackPane();
                 stack.getChildren().add(roundButton);
@@ -235,11 +237,10 @@ public class GameGui extends Application {
                     ArrayList<ArrayList<StateNode>> list = user(board, level, finalI, r, y);
                     list.forEach(state -> {
                         textArea.appendText("Level= " + (list.indexOf(state)) + "\n");
-                        state.forEach(
-                                el -> {
-                                    textArea.appendText("S= " + (state.indexOf(el)) + "\n");
-                                    textArea.appendText(buildString(el.color, el.played));
-                                });
+                        state.forEach(el -> {
+                            textArea.appendText("S= " + (state.indexOf(el)) + "\n");
+                            textArea.appendText(buildString(el.color, el.played));
+                        });
                     });
                 });
                 stack.setStyle("-fx-background-color:blue;");

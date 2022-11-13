@@ -3,13 +3,14 @@ package src;
 public class Heuristic {
     private final int[] heuristicArr = new int[42];
 
-    public int calculateHeuristic(int lastElementPos, boolean MinOrMax) {
+    public int calculateHeuristic(StateNode s) {
         setHeuristic();
-        if (!MinOrMax)  //for  max computer turn
-        {
-            return heuristicArr[lastElementPos];
+        int yellowAddedPoints =  (s.getYellowPoints() - s.getParentNode().getYellowPoints());
+        int redAddedPoints =  (s.getRedPoints() - s.getParentNode().getRedPoints());
+        if (!s.color[s.getLastIndexPlayed()]) {
+            return (heuristicArr[s.getLastIndexPlayed()] + 2 * (yellowAddedPoints - redAddedPoints));
         } else {
-            return -heuristicArr[lastElementPos];
+            return -1 * (heuristicArr[s.getLastIndexPlayed()] + 2 * (yellowAddedPoints - redAddedPoints));
         }
     }
 

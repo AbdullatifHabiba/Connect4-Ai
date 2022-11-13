@@ -6,37 +6,35 @@ import static src.GamePlay.*;
 
 public class MinMax {
 
-    static GamePlay.Pair min(StateNode s, int k) {
-        if (k <= 0) return new GamePlay.Pair(s, utility(s));
+    public static Pair min(StateNode s, int k, int numMoves) {
+        if (k <= 0 || numMoves == 42) return new Pair(s, utility(s));
         int minVal = OO;
         StateNode minChild = null;
-        ArrayList<StateNode> children = makeChildrenReady(s);
+        ArrayList<StateNode> children = GamePlay.makeChildrenReady(s);
+        numMoves++;
         for (StateNode child : children) {
-            GamePlay.Pair p = max(child, k - 1);
+            Pair p = max(child, k - 1, numMoves);
             if (p.val < minVal) {
                 minVal = p.val;
                 minChild = p.state;
             }
         }
-        return new GamePlay.Pair(minChild, minVal);
+        return new Pair(minChild, minVal);
     }
 
-    static GamePlay.Pair max(StateNode s, int k) {
-        if (k <= 0) return new GamePlay.Pair(s, utility(s));
+    public static Pair max(StateNode s, int k, int numMoves) {
+        if (k <= 0 || numMoves == 42) return new Pair(s, utility(s));
         int maxVal = -OO;
         StateNode maxChild = null;
-        ArrayList<StateNode> children = makeChildrenReady(s);
+        ArrayList<StateNode> children = GamePlay.makeChildrenReady(s);
+        numMoves++;
         for (StateNode child : children) {
-            GamePlay.Pair p = min(child, k - 1);//////////////change/////////////
+            Pair p = min(child, k - 1, numMoves);
             if (p.val > maxVal) {
                 maxVal = p.val;
                 maxChild = p.state;
             }
         }
-        return new GamePlay.Pair(maxChild, maxVal);
-    }
-
-    static StateNode decision(StateNode stateNode, int k) {
-        return max(stateNode, k).state;
+        return new Pair(maxChild, maxVal);
     }
 }
