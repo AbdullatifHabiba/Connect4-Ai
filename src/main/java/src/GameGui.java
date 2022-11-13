@@ -22,6 +22,7 @@ public class GameGui extends Application {
     boolean alphaBeta=false;
 
 
+
     @Override
     public void start(Stage stage) {
         stage.setTitle("Connect4");
@@ -45,7 +46,7 @@ public class GameGui extends Application {
 
             for (int j = 0; j < 7; j++) {
 
-                roundButton = new Button();
+                 roundButton = new Button();
 
                 roundButton.setStyle(
                         "-fx-background-radius: 5em; " +
@@ -59,7 +60,7 @@ public class GameGui extends Application {
                 roundButton.setDisable(true);
                 bts.add(roundButton);
                 StackPane stack = new StackPane();
-                stack.getChildren().add(roundButton);
+               stack.getChildren().add(roundButton);
                 Connect67.add(stack, j, i);
                 int finalI = j;
 
@@ -78,8 +79,6 @@ public class GameGui extends Application {
                                             textArea.appendText(buildString(el.color, el.played));
                                         });
                             });
-
-
                         }
 
                 );
@@ -110,7 +109,7 @@ public class GameGui extends Application {
 
         Button start = new Button("Start");
         start.setStyle("-fx-background-color:crimson;-fx-font-size:20px;");
-        start.setMinWidth(150);
+            start.setMinWidth(150);
         Button reset = new Button("Reset");
         reset.setStyle("-fx-background-color:coral;-fx-font-size:20px;");
         reset.setMinWidth(150);
@@ -185,8 +184,6 @@ public class GameGui extends Application {
         dashboard.add(stop, 1, 9);
         dashboard.setVgap(8);
         dashboard.add(reset, 1, 8);
-
-
         pane.add(Connect67, 0, 0);
         pane.add(dashboard, 1, 0);
         pane.add(red4, 0, 1);
@@ -201,10 +198,9 @@ public class GameGui extends Application {
         stage.show();
     }
 
-
     public ArrayList<ArrayList<StateNode>> user(GridPane board, int level, int col, Label r, Label y) {
 
-        StateNode node = GamePlay.userTurn(level, col,alphaBeta);
+        StateNode node = GamePlay.userTurn(level, col);
         Draw(board, node, level, r, y);
         r.setText(String.valueOf(node.getRedPoints()));
         y.setText(String.valueOf(node.getYellowPoints()));
@@ -214,8 +210,9 @@ public class GameGui extends Application {
     }
 
 
+
     public void computer(GridPane board, int level, Label r, Label y) {
-        StateNode node = GamePlay.myTurn(level);
+        StateNode node = GamePlay.myTurn(level,alphaBeta);
         r.setText(String.valueOf(node.getRedPoints()));
         y.setText(String.valueOf(node.getYellowPoints()));
         Draw(board, node, level, r, y);
@@ -255,7 +252,7 @@ public class GameGui extends Application {
                 board.add(stack, j, 5 - i);
                 int finalI = j;
                 roundButton.setOnAction(e -> {
-                    ArrayList<ArrayList<StateNode>> list = user(board, level, finalI, r, y);
+                 ArrayList<ArrayList<StateNode>> list = user(board, level, finalI, r, y);
                     //textArea.clear();
                     list.forEach(state -> {
                         textArea.appendText("Level= " + (list.indexOf(state)) + "\n");
@@ -277,20 +274,22 @@ public class GameGui extends Application {
 
     public static String buildString(boolean[] arr, boolean[] played) {
         StringBuilder stringBuilder = new StringBuilder();
-        for (int i = arr.length - 1; i >= 0; i--) {
-            if (arr[i] && played[i]) {
-                stringBuilder.append(1);
-            } else if (!arr[i] && played[i]) {
-                stringBuilder.append(0);
-
-            } else {
-                stringBuilder.append("-");
-
+        for(int i=arr.length-1;i>=0;i=i-7)
+        {
+            for(int j=i-6;j<=i;j++)
+            {
+                if(arr[j]  && played[j])
+                {
+                    stringBuilder.append(" 1 ");
+                }
+                else if(!arr[j]  && played[j])
+                {
+                    stringBuilder.append(" 0 ");
+                }else{
+                    stringBuilder.append(" - ");
+                }
             }
-            if (i % 7 == 0) {
-                stringBuilder.append("\n");
-            }
-
+            stringBuilder.append("\n");
         }
         return stringBuilder.toString();
     }

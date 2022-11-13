@@ -4,33 +4,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class GamePlay {
-    final static int OO = (int) 1e9;
     static int moves;
     static StateNode currentState;
-
-    public static void setChildrens(ArrayList<ArrayList<StateNode>> childrens) {
-        GamePlay.childrens = childrens;
-    }
-
+    final static int OO = (int) 1e9;
     private static ArrayList<ArrayList<StateNode>> childrens;
 
     static ArrayList<StateNode> makeChildrenReady(StateNode s) {
 
         ArrayList<StateNode> list = new ArrayList<>();
-        ///dumy variable///////////////////////
-        int j = 0;
-        for (int i = 0; i < 7; i++) // check whether the index is available or not
+        for (int i = 0; i < 7; i++)
         {
-            //System.out.println(s.getTopArr());
             if (s.getTopArr().get(i) >= 0) {
                 StateNode node = playTurn(s, !s.getTurn(), 7 * (5 - s.getTopArr().get(i)) + i, i);
                 list.add(node);
-
-                //////////////////////////////////////////////////////////////////
-                // print(list.get(j).color, list.get(j).played);
-                //  System.out.println();
-                j++;
-                ////////////////////////////////////////////////////////////////////
 
             }
         }
@@ -38,45 +24,14 @@ public class GamePlay {
         return list;
     }
 
-
     static StateNode playTurn(StateNode s, boolean turn, int ind, int colIndx) {
         return new StateNode(s, ind, turn, colIndx); ///////////////////what inserted///////////////////////////////
     }
 
-    static Pair min(StateNode s, int k) {
-        if (k <= 0) return new Pair(s, utility(s));
-        int minVal = OO;
-        StateNode minChild = null;
-        // get children
-        ArrayList<StateNode> children = makeChildrenReady(s);
-        for (StateNode child : children) {
-            Pair p = max(child, k - 1);//////////////change/////////////
-            if (p.val < minVal) {
-                minVal = p.val;
-                minChild = p.state;
-            }
-        }
-        return new Pair(minChild, minVal);
-    }
 
-    static Pair max(StateNode s, int k) {
-        if (k <= 0) return new Pair(s, utility(s));
-        int maxVal = -OO;
-        StateNode maxChild = null;
-        // get children
-        ArrayList<StateNode> children = makeChildrenReady(s);
-        for (StateNode child : children) {
-            Pair p = min(child, k - 1);//////////////change/////////////
-            if (p.val > maxVal) {
-                maxVal = p.val;
-                maxChild = p.state;
-            }
-        }
-        return new Pair(maxChild, maxVal);
-    }
-
-    static StateNode userTurn(int k, int col,boolean alphaBeta) {
+    static StateNode userTurn(int k, int col) {
         GamePlay.setChildrens(new ArrayList<>());
+        System.out.println("Number "+moves);
         if (moves == 42) return null;
         int ind = col; //index of playing comes from gui
 
@@ -87,19 +42,24 @@ public class GamePlay {
         currentState = s;
         moves++;
         currentState.calculatePoints(); // can be exchanged with method in stateNode class changes it
-        ////////////////////////////////////////////////////////////
-        // print(s.color,s.played);
-        System.out.println("Number of 4 red: " + s.getRedPoints());
-        ///////////////////////////////////////////////////////
+//        ////////////////////////////////////////////////////////////
+//        // print(s.color,s.played);
+//        System.out.println("Number of 4 red: " + s.getRedPoints()+"  "+moves);
+//        ///////////////////////////////////////////////////////
         return currentState;
     }
-
-    static StateNode myTurn(int k) {
+    static StateNode myTurn(int k ,boolean alphaBeta) {
         if (moves == 42)
             return null;
         long G = System.nanoTime();
-        Pair max = max(currentState, k);
-        for (int i = 0; i < k - 1; i++) {
+        Pair max;
+        if(alphaBeta){
+            max = AlphaBeta.maximize(currentState,-1*OO,OO, k,moves);
+        }
+        else{
+            max = minMaxWithout.max(currentState, k,moves);
+        }
+        for (int i = 1; max.state.getParentNode()!=currentState ; i++) {
             max.state = max.state.getParentNode();
         }
         max.state.setParentNode(currentState);
@@ -112,30 +72,13 @@ public class GamePlay {
         //print(currentState.color, currentState.played);
 
         //////////////////////////////////////////////////////////////////
-
         moves++;
         currentState.calculatePoints();/////////////////////////why 0 /////////////////////
         System.out.println("Number of 4 Yellow: " + currentState.getYellowPoints());
+        System.out.println("Number of 4 Red: " + currentState.getRedPoints());
+        System.out.println("Number computer "+moves);
         return currentState;
     }
-
-
-    static int utility(StateNode s) {
-        Heuristic obj = new Heuristic();
-        return obj.calculateHeuristic(s.getLastIndexPlayed(), s.color[s.getLastIndexPlayed()]);
-
-    }
-
-    static class Pair {
-        int val;
-        StateNode state;
-
-        public Pair(StateNode s, int val) {
-            this.val = val;
-            this.state = s;
-        }
-    }
-
 
     public static void print(boolean[] arr, boolean[] played) {
         for (int i = arr.length - 1; i >= 0; i--) {
@@ -152,10 +95,17 @@ public class GamePlay {
 
         }
     }
-
     public static ArrayList<ArrayList<StateNode>> getChildrens() {
+
         return childrens;
     }
+
+    public static void setChildrens(ArrayList<ArrayList<StateNode>> child) {
+
+        childrens =child;
+    }
+
+
 
 
 }
