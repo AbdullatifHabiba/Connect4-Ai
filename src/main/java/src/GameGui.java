@@ -13,6 +13,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 
 public class GameGui extends Application {
@@ -21,6 +22,7 @@ public class GameGui extends Application {
     TextArea textArea = new TextArea();
     boolean alphaBeta=false;
     ArrayList<ArrayList<StateNode>> Levels=new ArrayList<>();
+    ArrayList<Button> bts = new ArrayList<>();
 
 
 
@@ -42,7 +44,6 @@ public class GameGui extends Application {
         yellowVal.setStyle("-fx-text-fill:rgb(17, 186, 216);");
         red4Val.setStyle("-fx-text-fill:rgb(17, 186, 216);");
         Button roundButton;
-        ArrayList<Button> bts = new ArrayList<>();
         for (int i = 0; i < 6; i++) {
 
             for (int j = 0; j < 7; j++) {
@@ -60,6 +61,7 @@ public class GameGui extends Application {
                 roundButton.setId("roundedButton");
                 roundButton.setDisable(true);
                 bts.add(roundButton);
+
                 StackPane stack = new StackPane();
                 stack.getChildren().add(roundButton);
                 Connect67.add(stack, j, i);
@@ -136,8 +138,15 @@ public class GameGui extends Application {
         });
 
         reset.setOnAction(event -> {
-            stage.close();
-            start(new Stage());
+            GamePlay.currentState = new StateNode();
+            GamePlay.moves = 0;
+
+            GamePlay.setChildrens(new ArrayList<>());
+            bts = new ArrayList<>();
+            start(stage);
+            h=new HashSet<>();
+
+            //stage.close();
             textArea.clear();
         });
         stop.setOnAction(event -> stage.close());
@@ -222,6 +231,7 @@ public class GameGui extends Application {
         Draw(board, node, level, r, y);
 
     }
+    HashSet<Integer> h=new HashSet<>();
 
     private void Draw(GridPane board, StateNode stateNode, int level, Label r, Label y) {
         int k = 0;
@@ -241,7 +251,7 @@ public class GameGui extends Application {
                 } else {
                     color = "white";
                 }
-                k++;
+
                 roundButton.setStyle(
                         "-fx-background-radius: 5em; " +
                                 "-fx-min-width: 50px; " +
@@ -255,12 +265,21 @@ public class GameGui extends Application {
                 stack.getChildren().add(roundButton);
                 board.add(stack, j, 5 - i);
                 int finalI = j;
+                int fk = k;
                 roundButton.setOnAction(e -> {
+                    if(stateNode.played[35+finalI]) {h.add(finalI);}
+                    System.out.println("Completed Columns: "+h.stream().toList());
+                    if (h.contains(finalI)){
+                        new Alert(Alert.AlertType.WARNING, "THIS COLUMN IS COMPLETED ").show();
+                        return;
+
+                    }
                     user(board, level, finalI, r, y);
                     //textArea.clear();
 
 
                 });
+                k++;
                 stack.setStyle("-fx-background-color:blue;");
                 board.setHgap(.25);
                 board.setVgap(.25);
