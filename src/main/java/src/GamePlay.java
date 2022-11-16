@@ -80,7 +80,7 @@ public class GamePlay {
 
     public static int utility(StateNode s) {
         Heuristic obj = new Heuristic();
-        return obj.calculateHeuristic(s);
+        return obj.calculateHeuristic(s, currentState);
 
     }
 

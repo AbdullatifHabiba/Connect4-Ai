@@ -40,23 +40,15 @@ public class StateNode {
         int indexOfPlay = this.lastIndexPlayed;
         int left = 0;
         int right = 0;
-        int up = 0;
         int down = 0;
         int upLeft = 0;
         int upRight = 0;
         int downLeft = 0;
         int downRight = 0;
-        // up
-        int p = indexOfPlay + 7;
-        int i = 0;
-        while (p < 42 && i < 3 && this.played[p] && this.color[p] == this.color[indexOfPlay]) {
-            p += 7;
-            i++;
-            up++;
-        }
+
         // down
-        p = indexOfPlay - 7;
-        i = 0;
+        int p = indexOfPlay - 7;
+        int i = 0;
         while (p >= 0 && p >= 0 && i < 3 && this.played[p] && this.color[p] == this.color[indexOfPlay]) {
             p -= 7;
             i++;
@@ -110,7 +102,7 @@ public class StateNode {
             i++;
             downRight++;
         }
-        int points = Math.max(0, up + down - 2) + Math.max(0, right + left - 2) + Math.max(0, upRight + downLeft - 2) + Math.max(0, upLeft + downRight - 2);
+        int points = Math.max(0, down - 2) + Math.max(0, right + left - 2) + Math.max(0, upRight + downLeft - 2) + Math.max(0, upLeft + downRight - 2);
         if (color[indexOfPlay]) redPoints += points;
         else yellowPoints += points;
     }

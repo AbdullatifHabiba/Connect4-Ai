@@ -123,9 +123,11 @@ public class GameGui extends Application {
             LevelVal.setDisable(true);
         });
         reset.setOnAction(event -> {
-            stage.close();
-            start(new Stage());
-            textArea.clear();
+            GamePlay.currentState = new StateNode();
+            GamePlay.moves = 0;
+            GamePlay.setChildren(new ArrayList<>());
+//            bts = new ArrayList<>();
+            start(stage);
         });
         stop.setOnAction(event -> stage.close());
         textArea.setMinHeight(500);

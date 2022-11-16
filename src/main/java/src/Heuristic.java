@@ -3,14 +3,30 @@ package src;
 public class Heuristic {
     private final int[] heuristicArr = new int[42];
 
-    public int calculateHeuristic(StateNode s) {
+    public int calculateHeuristic(StateNode s, StateNode current) {
         setHeuristic();
-        int yellowAddedPoints =  (s.getYellowPoints() - s.getParentNode().getYellowPoints());
-        int redAddedPoints =  (s.getRedPoints() - s.getParentNode().getRedPoints());
+        if (s.equals(current))
+            return 0;
+        int[] points = pointsNextTo(s);
+        int yellowAddedPoints = (int) Math.pow(s.getYellowPoints() - current.getYellowPoints(), 2);
+        int redAddedPoints = (int) Math.pow(s.getRedPoints() - current.getRedPoints(), 2);
+        int utl = 50 * yellowAddedPoints - 50 * redAddedPoints;
         if (!s.color[s.getLastIndexPlayed()]) {
-            return (heuristicArr[s.getLastIndexPlayed()] + 3 * yellowAddedPoints);
+            for (int i = 0;i < 4;i++){
+                if (points[i] == 1)
+                    utl += 10;
+                else if (points[i] == 2)
+                    utl += 30;
+            }
+            return utl + calculateHeuristic(s.getParentNode(), current) + heuristicArr[s.getLastIndexPlayed()];
         } else {
-            return -1 * (heuristicArr[s.getLastIndexPlayed()] + 3 * redAddedPoints);
+            for (int i = 0;i < 4;i++){
+                if (points[i] == 1)
+                    utl -= 10;
+                else if (points[i] == 2)
+                    utl -= 30;
+            }
+            return calculateHeuristic(s.getParentNode(), current) + utl - heuristicArr[s.getLastIndexPlayed()];
         }
     }
 
@@ -59,5 +75,72 @@ public class Heuristic {
         heuristicArr[41] = 3;
     }
 
+    int[] pointsNextTo(StateNode s) {
+        int indexOfPlay = s.getLastIndexPlayed();
+        int left = 0;
+        int right = 0;
+        int down = 0;
+        int upLeft = 0;
+        int upRight = 0;
+        int downLeft = 0;
+        int downRight = 0;
 
+        // down
+        int p = indexOfPlay - 7;
+        int i = 0;
+        while (p >= 0 && p >= 0 && i < 3 && s.played[p] && s.color[p] == s.color[indexOfPlay]) {
+            p -= 7;
+            i++;
+            down++;
+        }
+        // right
+        p = indexOfPlay + 1;
+        i = 0;
+        while (p / 7 == indexOfPlay / 7 && i < 3 && s.played[p] && s.color[p] == s.color[indexOfPlay]) {
+            p += 1;
+            i++;
+            right++;
+        }
+        p = indexOfPlay - 1;
+        i = 0;
+        // left
+        while (p >= 0 && p / 7 == indexOfPlay / 7 && i < 3 && s.played[p] && s.color[p] == s.color[indexOfPlay]) {
+            p -= 1;
+            i++;
+            left++;
+        }
+        // up left
+        p = indexOfPlay + 6;
+        i = 0;
+        while (p < 42 && p % 7 != 6 && i < 3 && s.played[p] && s.color[p] == s.color[indexOfPlay]) {
+            p += 6;
+            i++;
+            upLeft++;
+        }
+        // up right
+        p = indexOfPlay + 8;
+        i = 0;
+        while (p < 42 && p % 7 != 0 && i < 3 && s.played[p] && s.color[p] == s.color[indexOfPlay]) {
+            p += 8;
+            i++;
+            upRight++;
+        }
+        // down left
+        p = indexOfPlay - 8;
+        i = 0;
+        while (p >= 0 && p < 42 && p % 7 != 6 && i < 3 && s.played[p] && s.color[p] == s.color[indexOfPlay]) {
+            p -= 8;
+            i++;
+            downLeft++;
+        }
+        // down right
+        p = indexOfPlay - 6;
+        i = 0;
+        while (p >= 0 && p < 42 && p % 7 != 0 && i < 3 && s.played[p] && s.color[p] == s.color[indexOfPlay]) {
+            p -= 6;
+            i++;
+            downRight++;
+        }
+        return new int[]{down, right + left, upLeft + downRight, upRight + downLeft};
+    }
 }
