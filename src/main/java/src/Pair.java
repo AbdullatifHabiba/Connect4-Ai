@@ -1,5 +1,6 @@
 package src;
-class Pair {
+
+public class Pair {
     int val;
     StateNode state;
 
