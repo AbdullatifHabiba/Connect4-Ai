@@ -2,6 +2,7 @@ package src;
 
 
 import javafx.application.Application;
+import javafx.application.HostServices;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -12,6 +13,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -19,11 +23,16 @@ import java.util.HashSet;
 public class GameGui extends Application {
 
 
-    TextArea textArea = new TextArea();
-    boolean alphaBeta=false;
-    ArrayList<ArrayList<StateNode>> Levels=new ArrayList<>();
-    ArrayList<Button> bts = new ArrayList<>();
+    boolean alphaBeta = false;
+    ArrayList<Button> bts = new ArrayList<>();// board buttons
+    HashSet<Integer> h = new HashSet<>();//to completed columns
+    FileWriter fileWriter = new FileWriter("trace.txt");//file of tracing
+    PrintWriter printWriter = new PrintWriter(fileWriter);
+    int levels = 0;//to print levels in file
+    HostServices hostServices = getHostServices();//to show file
 
+    public GameGui() throws IOException {
+    }
 
 
     @Override
@@ -36,7 +45,6 @@ public class GameGui extends Application {
         dashboard.setPadding(new Insets(20, 20, 20, 20));
         Label Level = new Label("Level");
         TextField LevelVal = new TextField();
-        GridPane pane2 = new GridPane();
         Label red4 = new Label("Number of 4 Red :");
         Label red4Val = new Label("0");
         Label yellow4 = new Label("Number of 4 Yellow : ");
@@ -66,12 +74,10 @@ public class GameGui extends Application {
                 stack.getChildren().add(roundButton);
                 Connect67.add(stack, j, i);
                 int finalI = j;
-
-
                 roundButton.setOnAction(e -> {
                             GamePlay.currentState = new StateNode();
-                            GamePlay.setChildrens(new ArrayList<>());
-                       user(Connect67, Integer.parseInt(LevelVal.getText()), finalI, red4Val, yellowVal);
+                            GamePlay.setChildren(new ArrayList<>(), new ArrayList<>());
+                            user(Connect67, Integer.parseInt(LevelVal.getText()), finalI, red4Val, yellowVal);
 
                         }
 
@@ -126,8 +132,8 @@ public class GameGui extends Application {
                 new Alert(Alert.AlertType.ERROR, "Enter Valid Level integer number >= 0 ").show();
                 return;
             }
-            String minmax=chooseAlgorithm.getValue().toString();
-            alphaBeta=minmax.equals("with alpha-beta pruning");
+            String minmax = chooseAlgorithm.getValue().toString();
+            alphaBeta = minmax.equals("with alpha-beta pruning");
             bts.forEach(b -> b.setDisable(false));
             reset.setDisable(false);
             trace.setDisable(false);
@@ -141,33 +147,28 @@ public class GameGui extends Application {
             GamePlay.currentState = new StateNode();
             GamePlay.moves = 0;
 
-            GamePlay.setChildrens(new ArrayList<>());
+            GamePlay.setChildren(new ArrayList<>(), new ArrayList<>());
             bts = new ArrayList<>();
             start(stage);
-            h=new HashSet<>();
-
-            //stage.close();
-            textArea.clear();
+            h = new HashSet<>();
         });
-        stop.setOnAction(event -> stage.close());
+        stop.setOnAction(event -> {
+            stage.close();
+            try {
+                fileWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
 
-        textArea.setMinHeight(500);
-        textArea.setMinWidth(500);
-        textArea.setEditable(false);
 
-
-        Button finish = new Button("Return");
-        finish.setStyle("-fx-background-color:green;-fx-font-size:20px;");
-        finish.setMinWidth(150);
-        pane2.add(textArea, 0, 0);
-        pane2.add(finish, 0, 1);
-        Scene scene2 = new Scene(pane2);
         trace.setOnAction(event -> {
-            maketrace();
-            Stage stage2 = new Stage();
-            stage2.setScene(scene2);
-            stage2.show();
-            finish.setOnAction(e -> stage2.close());
+            try {
+                fileWriter.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            hostServices.showDocument("trace.txt");
 
         });
 
@@ -199,39 +200,39 @@ public class GameGui extends Application {
         stage.show();
     }
 
-    private void maketrace() {
-        Levels.forEach(state -> {
-            textArea.appendText("Level= " + (Levels.indexOf(state)) + "\n");
-            state.forEach(
-                    el -> {
-                        textArea.appendText("S= " + (state.indexOf(el)) + "\n");
+    private void makeTrace(ArrayList<ArrayList<boolean[]>> ChildrenPlayed, ArrayList<ArrayList<boolean[]>> ChildrenColor) {
+        for (int i = 0; i < ChildrenPlayed.size(); i++) {
+            printWriter.println("Level= " + (levels++) + "\n");
+            for (int i1 = 0; i1 < ChildrenPlayed.get(i).size(); i1++) {
+                printWriter.println("S= " + (i1) + "\n");
+                printWriter.println(buildString(ChildrenColor.get(i).get(i1), ChildrenPlayed.get(i).get(i1)));
 
-                        textArea.appendText(buildString(el.color, el.played));
-                    });
-        });
+            }
+
+        }
+
     }
 
     public void user(GridPane board, int level, int col, Label r, Label y) {
 
-        StateNode node = GamePlay.userTurn(level, col);
+        StateNode node = GamePlay.userTurn(col);
         Draw(board, node, level, r, y);
         r.setText(String.valueOf(node.getRedPoints()));
         y.setText(String.valueOf(node.getYellowPoints()));
 
         computer(board, level, r, y);
-        Levels.addAll( GamePlay.getChildrens());
+        makeTrace(GamePlay.getChildrenPlayedArr(), GamePlay.getChildrenColorArr());
+
+
     }
 
-
-
     public void computer(GridPane board, int level, Label r, Label y) {
-        StateNode node = GamePlay.myTurn(level,alphaBeta);
+        StateNode node = GamePlay.myTurn(level, alphaBeta);
         r.setText(String.valueOf(node.getRedPoints()));
         y.setText(String.valueOf(node.getYellowPoints()));
         Draw(board, node, level, r, y);
 
     }
-    HashSet<Integer> h=new HashSet<>();
 
     private void Draw(GridPane board, StateNode stateNode, int level, Label r, Label y) {
         int k = 0;
@@ -265,18 +266,18 @@ public class GameGui extends Application {
                 stack.getChildren().add(roundButton);
                 board.add(stack, j, 5 - i);
                 int finalI = j;
-                int fk = k;
+
                 roundButton.setOnAction(e -> {
-                    if(stateNode.played[35+finalI]) {h.add(finalI);}
-                    System.out.println("Completed Columns: "+h.stream().toList());
-                    if (h.contains(finalI)){
+                    if (stateNode.played[35 + finalI]) {
+                        h.add(finalI);
+                    }
+                    System.out.println("Completed Columns: " + h.stream().toList());
+                    if (h.contains(finalI)) {
                         new Alert(Alert.AlertType.WARNING, "THIS COLUMN IS COMPLETED ").show();
                         return;
 
                     }
                     user(board, level, finalI, r, y);
-                    //textArea.clear();
-
 
                 });
                 k++;
@@ -289,18 +290,13 @@ public class GameGui extends Application {
 
     public static String buildString(boolean[] arr, boolean[] played) {
         StringBuilder stringBuilder = new StringBuilder();
-        for(int i=arr.length-1;i>=0;i=i-7)
-        {
-            for(int j=i-6;j<=i;j++)
-            {
-                if(arr[j]  && played[j])
-                {
+        for (int i = arr.length - 1; i >= 0; i = i - 7) {
+            for (int j = i - 6; j <= i; j++) {
+                if (arr[j] && played[j]) {
                     stringBuilder.append(" 1 ");
-                }
-                else if(!arr[j]  && played[j])
-                {
+                } else if (!arr[j] && played[j]) {
                     stringBuilder.append(" 0 ");
-                }else{
+                } else {
                     stringBuilder.append(" - ");
                 }
             }

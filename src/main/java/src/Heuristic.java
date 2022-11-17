@@ -88,7 +88,7 @@ public class Heuristic {
         // down
         int p = indexOfPlay - 7;
         int i = 0;
-        while (p >= 0 && p >= 0 && i < 3 && s.played[p] && s.color[p] == s.color[indexOfPlay]) {
+        while (p >= 0 && i < 3 && s.played[p] && s.color[p] == s.color[indexOfPlay]) {
             p -= 7;
             i++;
             down++;

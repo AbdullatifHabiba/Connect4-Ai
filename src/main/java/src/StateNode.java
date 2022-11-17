@@ -49,7 +49,7 @@ public class StateNode {
         // down
         int p = indexOfPlay - 7;
         int i = 0;
-        while (p >= 0 && p >= 0 && i < 3 && this.played[p] && this.color[p] == this.color[indexOfPlay]) {
+        while ( p >= 0 && i < 3 && this.played[p] && this.color[p] == this.color[indexOfPlay]) {
             p -= 7;
             i++;
             down++;
