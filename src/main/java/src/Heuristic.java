@@ -33,59 +33,59 @@ public class Heuristic {
 
     public int feature2(StateNode s , int positionOf3)
     {
-      if(positionOf3==0)
-      {
-          if(s.getLastIndexPlayed()+7<42 && !s.played[s.getLastIndexPlayed()+7])
-          {
-              return 50;
-          }
-          else{
-              return 20;
-          }
-      }
-      else if(positionOf3 ==1) {
-          int p = s.getLastIndexPlayed();
-          if ((p-2)>=0 &&(p+2)<42 &&(p - 2) / 7 == (p / 7)
-                  && (p + 2) / 7 == (p / 7) && !s.played[p - 2] && !s.played[p + 2]) {
-              return 1000;
-          } else if (((p-1)>=0 && (p - 1) / 7 == (p / 7) && !s.played[p - 1]) &&
-                  ((p + 3)<42 && (p + 3) / 7 == (p / 7) && !s.played[p + 3])) {
-              return 1000;
-          }else if(((p+1)>=0 && (p + 1) / 7 == (p / 7) && !s.played[p + 1]) &&
-                  ((p - 3)<42 && (p - 3) / 7 == (p / 7) && !s.played[p - 3]))
-          {
-              return 1000;
-          }
-          else {
-              return 20;
-          }
-      }
-      else if(positionOf3 ==2)
-      {
-          int p=s.getLastIndexPlayed();
-          if((p-7+1)>=0 &&(p+14-2)<42 &&(p-7+1)/7==(p/7-1) && s.color[(p-7+1)]==s.color[p]
-                  && (p+14-2)/7==(p/7+1) && s.color[(p+14-2)]==s.color[p] && !s.played[p+7-1])
-          {
-              return 1000;
-          }
-          else{
-              return 20;
-          }
-      }
-      else if(positionOf3 ==3)
-      {
-          int p=s.getLastIndexPlayed();
-          if((p-7-1)>=0 &&(p+14+2)<42 && (p-7-1)/7==(p/7-1) && s.color[(p-7-1)]==s.color[p]
-                  && (p+14+2)/7==(p/7+2) && s.color[(p+14+2)]==s.color[p] && !s.played[p+7+1])
-          {
-              return 1000;
-          }
-          else{
-              return 20;
-          }
-      }
-      return 20;
-      }
+        if(positionOf3==0)
+        {
+            if(s.getLastIndexPlayed()+7<42 && !s.played[s.getLastIndexPlayed()+7])
+            {
+                return 50;
+            }
+            else{
+                return 20;
+            }
+        }
+        else if(positionOf3 ==1) {
+            int p = s.getLastIndexPlayed();
+            if ((p-2)>=0 &&(p+2)<42 &&(p - 2) / 7 == (p / 7)
+                    && (p + 2) / 7 == (p / 7) && !s.played[p - 2] && !s.played[p + 2]) {
+                return 1000;
+            } else if (((p-1)>=0 && (p - 1) / 7 == (p / 7) && !s.played[p - 1]) &&
+                    ((p + 3)<42 && (p + 3) / 7 == (p / 7) && !s.played[p + 3])) {
+                return 1000;
+            }else if(((p+1)<42 && (p + 1) / 7 == (p / 7) && !s.played[p + 1]) &&
+                    ((p - 3)>=0 && (p - 3) / 7 == (p / 7) && !s.played[p - 3]))
+            {
+                return 1000;
+            }
+            else {
+                return 20;
+            }
+        }
+        else if(positionOf3 ==2)
+        {
+            int p=s.getLastIndexPlayed();
+            if((p-7+1)>=0 &&(p+14-2)<42 &&(p-7+1)/7==(p/7-1) && s.color[(p-7+1)]==s.color[p]
+                    && (p+14-2)/7==(p/7+1) && s.color[(p+14-2)]==s.color[p] && !s.played[p+7-1])
+            {
+                return 1000;
+            }
+            else{
+                return 20;
+            }
+        }
+        else if(positionOf3 ==3)
+        {
+            int p=s.getLastIndexPlayed();
+            if((p-7-1)>=0 &&(p+14+2)<42 && (p-7-1)/7==(p/7-1) && s.color[(p-7-1)]==s.color[p]
+                    && (p+14+2)/7==(p/7+2) && s.color[(p+14+2)]==s.color[p] && !s.played[p+7+1])
+            {
+                return 1000;
+            }
+            else{
+                return 20;
+            }
+        }
+        return 20;
+    }
 
     public int feature3(StateNode s , int positionOf3){
         if(positionOf3==0)
@@ -101,7 +101,7 @@ public class Heuristic {
         else if(positionOf3 ==1) {
             int p = s.getLastIndexPlayed();
             if ((p-2)>=0 &&(p+1)<42 &&(p - 2) / 7 == (p / 7) && (p + 1) / 7 == (p / 7) && !s.played[p - 2] && !s.played[p + 1]
-            ||(p-1)>=0 &&(p+2)<42 &&(p - 1) / 7 == (p / 7) && (p + 2) / 7 == (p / 7) && !s.played[p - 1] && !s.played[p + 2]) {
+                    ||(p-1)>=0 &&(p+2)<42 &&(p - 1) / 7 == (p / 7) && (p + 2) / 7 == (p / 7) && !s.played[p - 1] && !s.played[p + 2]) {
                 return 45;
             } else {
                 return 15;
