@@ -10,25 +10,101 @@ public class Heuristic {
         int[] points = pointsNextTo(s);
         int yellowAddedPoints = (int) Math.pow(s.getYellowPoints() - current.getYellowPoints(), 2);
         int redAddedPoints = (int) Math.pow(s.getRedPoints() - current.getRedPoints(), 2);
-        int utl = 50 * yellowAddedPoints - 50 * redAddedPoints;
+        int utl = 10000 * yellowAddedPoints - 10000 * redAddedPoints;
         if (!s.color[s.getLastIndexPlayed()]) {
             for (int i = 0;i < 4;i++){
-                if (points[i] == 1)
-                    utl += 10;
+                if (points[i] == 1) {
+                    utl += feature3(s,i);
+                }
                 else if (points[i] == 2)
-                    utl += 30;
+                    utl += feature2(s,i);
             }
-            return utl + calculateHeuristic(s.getParentNode(), current) + heuristicArr[s.getLastIndexPlayed()];
+            return utl + heuristicArr[s.getLastIndexPlayed()];
         } else {
             for (int i = 0;i < 4;i++){
                 if (points[i] == 1)
-                    utl -= 10;
+                    utl -= feature3(s,i);
                 else if (points[i] == 2)
-                    utl -= 30;
+                    utl -= feature2(s,i);
             }
-            return calculateHeuristic(s.getParentNode(), current) + utl - heuristicArr[s.getLastIndexPlayed()];
+            return  utl - heuristicArr[s.getLastIndexPlayed()];
         }
     }
+
+    public int feature2(StateNode s , int positionOf3)
+    {
+      if(positionOf3==0)
+      {
+          if(s.getLastIndexPlayed()+7<42 && !s.played[s.getLastIndexPlayed()+7])
+          {
+              return 50;
+          }
+          else{
+              return 20;
+          }
+      }
+      else if(positionOf3 ==1) {
+          int p = s.getLastIndexPlayed();
+          if ((p-2)>=0 &&(p+2)<42 &&(p - 2) / 7 == (p / 7)
+                  && (p + 2) / 7 == (p / 7) && !s.played[p - 2] && !s.played[p + 2]) {
+              return 70;
+          } else if (((p-2)>=0 && (p - 2) / 7 == (p / 7) && !s.played[p - 2]) ||
+                  ((p + 2)<42 && (p + 2) / 7 == (p / 7) && !s.played[p + 2])) {
+              return 50;
+          } else {
+              return 20;
+          }
+      }
+      else if(positionOf3 ==2)
+      {
+          int p=s.getLastIndexPlayed();
+          if((p-7+1)>=0 &&(p+14-2)<42 &&(p-7+1)/7==(p/7-1) && s.color[(p-7+1)]==s.color[p]
+                  && (p+14-2)/7==(p/7+1) && s.color[(p+14-2)]==s.color[p] && !s.played[p+7-1])
+          {
+              return 70;
+          }
+          else{
+              return 20;
+          }
+      }
+      else if(positionOf3 ==3)
+      {
+          int p=s.getLastIndexPlayed();
+          if((p-7-1)>=0 &&(p+14+2)<42 && (p-7-1)/7==(p/7-1) && s.color[(p-7-1)]==s.color[p]
+                  && (p+14+2)/7==(p/7+2) && s.color[(p+14+2)]==s.color[p] && !s.played[p+7+1])
+          {
+              return 70;
+          }
+          else{
+              return 20;
+          }
+      }
+      return 20;
+      }
+
+    public int feature3(StateNode s , int positionOf3){
+        if(positionOf3==0)
+        {
+            if(s.getLastIndexPlayed()+7<42 && !s.played[s.getLastIndexPlayed()+7])
+            {
+                return 30;
+            }
+            else{
+                return 15;
+            }
+        }
+        else if(positionOf3 ==1) {
+            int p = s.getLastIndexPlayed();
+            if ((p-2)>=0 &&(p+1)<42 &&(p - 2) / 7 == (p / 7) && (p + 1) / 7 == (p / 7) && !s.played[p - 2] && !s.played[p + 1]
+            ||(p-1)>=0 &&(p+2)<42 &&(p - 1) / 7 == (p / 7) && (p + 2) / 7 == (p / 7) && !s.played[p - 1] && !s.played[p + 2]) {
+                return 45;
+            } else {
+                return 15;
+            }
+        }
+        return 15;
+    }
+
 
     public void setHeuristic() {
         heuristicArr[0] = 3;

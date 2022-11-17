@@ -56,13 +56,11 @@ public class GamePlay {
         }
         max.state.setParentNode(currentState);
         currentState = max.state;
+        currentState.setHeuristic(max.val);//////////////////////////////
         long G2 = System.nanoTime();
-        System.out.println("Current Time in ms: " + (G2 - G) / 1000000);
-        System.out.println("goooooooooooooooooooal");
+        System.out.println("Current Time in ms: " + (G2 - G)/1000000 );
         moves++;
-        System.out.println("Number of 4 Yellow: " + currentState.getYellowPoints());
-        System.out.println("Number of 4 Red: " + currentState.getRedPoints());
-        System.out.println("Number computer " + moves);
+
         return currentState;
     }
 

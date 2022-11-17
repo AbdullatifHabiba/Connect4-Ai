@@ -11,6 +11,7 @@ public class StateNode {
     private ArrayList<Integer> topArr;
     private boolean MinOrMax;
     private int lastIndexPlayed;
+    private int heuristic ;
 
     public StateNode() {
         // 6 * 7
@@ -153,6 +154,14 @@ public class StateNode {
 
     public void setLastIndexPlayed(int lastIndexPlayed) {
         this.lastIndexPlayed = lastIndexPlayed;
+    }
+
+    public int getHeuristic() {
+        return heuristic;
+    }
+
+    public void setHeuristic(int heuristic) {
+        this.heuristic = heuristic;
     }
 
 }
