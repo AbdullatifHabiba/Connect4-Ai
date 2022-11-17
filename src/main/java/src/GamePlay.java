@@ -2,7 +2,6 @@ package src;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
 public class GamePlay {
     final static int OO = (int) 1e9;
     static int moves;
@@ -32,7 +31,7 @@ public class GamePlay {
     }
 
     static StateNode userTurn(int col) {
-        GamePlay.setChildren(new ArrayList<>(), new ArrayList<>());
+        GamePlay.setChildren(new ArrayList<>(),new ArrayList<>());
         System.out.println("Number " + moves);
         if (moves == 42) return null;
         if (currentState.getTopArr() == null) {
@@ -59,26 +58,33 @@ public class GamePlay {
         currentState = max.state;
         currentState.setHeuristic(max.val);//////////////////////////////
         long G2 = System.nanoTime();
-        System.out.println("Current Time in ms: " + (G2 - G) / 1000000);
+        System.out.println("Current Time in ms: " + (G2 - G)/1000000 );
         moves++;
+
         return currentState;
     }
+
+
 
     public static int utility(StateNode s) {
         Heuristic obj = new Heuristic();
         return obj.calculateHeuristic(s, currentState);
+
     }
+
+
 
     public static ArrayList<ArrayList<boolean[]>> getChildrenColorArr() {
+
         return childrenColorArr;
     }
-
     public static ArrayList<ArrayList<boolean[]>> getChildrenPlayedArr() {
+
         return childrenPlayedArr;
     }
 
-    public static void setChildren(ArrayList<ArrayList<boolean[]>> childL, ArrayList<ArrayList<boolean[]>> childR) {
-        childrenColorArr = childL;
-        childrenPlayedArr = childR;
+    public static void setChildren(ArrayList<ArrayList<boolean[]>> childL,ArrayList<ArrayList<boolean[]>> childR) {
+        childrenColorArr=childL;
+        childrenPlayedArr =childR;
     }
 }

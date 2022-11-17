@@ -11,7 +11,7 @@ public class StateNode {
     private ArrayList<Integer> topArr;
     private boolean MinOrMax;
     private int lastIndexPlayed;
-    private int heuristic;
+    private int heuristic ;
 
     public StateNode() {
         // 6 * 7
@@ -50,7 +50,7 @@ public class StateNode {
         // down
         int p = indexOfPlay - 7;
         int i = 0;
-        while (p >= 0 && i < 3 && this.played[p] && this.color[p] == this.color[indexOfPlay]) {
+        while ( p >= 0 && i < 3 && this.played[p] && this.color[p] == this.color[indexOfPlay]) {
             p -= 7;
             i++;
             down++;
