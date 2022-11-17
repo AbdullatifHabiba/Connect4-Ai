@@ -47,11 +47,16 @@ public class Heuristic {
           int p = s.getLastIndexPlayed();
           if ((p-2)>=0 &&(p+2)<42 &&(p - 2) / 7 == (p / 7)
                   && (p + 2) / 7 == (p / 7) && !s.played[p - 2] && !s.played[p + 2]) {
-              return 70;
-          } else if (((p-2)>=0 && (p - 2) / 7 == (p / 7) && !s.played[p - 2]) ||
-                  ((p + 2)<42 && (p + 2) / 7 == (p / 7) && !s.played[p + 2])) {
-              return 50;
-          } else {
+              return 1000;
+          } else if (((p-1)>=0 && (p - 1) / 7 == (p / 7) && !s.played[p - 1]) &&
+                  ((p + 3)<42 && (p + 3) / 7 == (p / 7) && !s.played[p + 3])) {
+              return 1000;
+          }else if(((p+1)>=0 && (p + 1) / 7 == (p / 7) && !s.played[p + 1]) &&
+                  ((p - 3)<42 && (p - 3) / 7 == (p / 7) && !s.played[p - 3]))
+          {
+              return 1000;
+          }
+          else {
               return 20;
           }
       }
@@ -61,7 +66,7 @@ public class Heuristic {
           if((p-7+1)>=0 &&(p+14-2)<42 &&(p-7+1)/7==(p/7-1) && s.color[(p-7+1)]==s.color[p]
                   && (p+14-2)/7==(p/7+1) && s.color[(p+14-2)]==s.color[p] && !s.played[p+7-1])
           {
-              return 70;
+              return 1000;
           }
           else{
               return 20;
@@ -73,7 +78,7 @@ public class Heuristic {
           if((p-7-1)>=0 &&(p+14+2)<42 && (p-7-1)/7==(p/7-1) && s.color[(p-7-1)]==s.color[p]
                   && (p+14+2)/7==(p/7+2) && s.color[(p+14+2)]==s.color[p] && !s.played[p+7+1])
           {
-              return 70;
+              return 1000;
           }
           else{
               return 20;
