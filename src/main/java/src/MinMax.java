@@ -1,7 +1,9 @@
 package src;
 
 import java.util.ArrayList;
-import static src.GamePlay.*;
+
+import static src.GamePlay.OO;
+import static src.GamePlay.utility;
 
 public class MinMax {
 
@@ -37,4 +39,3 @@ public class MinMax {
         return new Pair(maxChild, maxVal);
     }
 }
-

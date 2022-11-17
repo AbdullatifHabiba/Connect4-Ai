@@ -1,6 +1,7 @@
 package src;
 
 import javafx.application.Application;
+import javafx.application.HostServices;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -11,13 +12,23 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
-
+import java.util.HashSet;
 
 public class GameGui extends Application {
+    boolean alphaBeta = false;
+    ArrayList<Button> bts = new ArrayList<>();// board buttons
+    HashSet<Integer> h = new HashSet<>();//to completed columns
+    FileWriter fileWriter = new FileWriter("trace.txt");//file of tracing
+    PrintWriter printWriter = new PrintWriter(fileWriter);
+    int levels = 0;//to print levels in file
+    HostServices hostServices = getHostServices();//to show file
 
-    TextArea textArea = new TextArea();
-    boolean alphaBeta = true;
+    public GameGui() throws IOException {
+    }
 
     public static String buildString(boolean[] arr, boolean[] played) {
         StringBuilder stringBuilder = new StringBuilder();
@@ -50,7 +61,6 @@ public class GameGui extends Application {
         dashboard.setPadding(new Insets(20, 20, 20, 20));
         Label Level = new Label("Level");
         TextField LevelVal = new TextField();
-        GridPane pane2 = new GridPane();
         Label red4 = new Label("Number of 4 Red :");
         Label red4Val = new Label("0");
         Label yellow4 = new Label("Number of 4 Yellow : ");
@@ -58,13 +68,9 @@ public class GameGui extends Application {
         yellowVal.setStyle("-fx-text-fill:rgb(17, 186, 216);");
         red4Val.setStyle("-fx-text-fill:rgb(17, 186, 216);");
         Button roundButton;
-        ArrayList<Button> bts = new ArrayList<>();
         for (int i = 0; i < 6; i++) {
-
             for (int j = 0; j < 7; j++) {
-
                 roundButton = new Button();
-
                 roundButton.setStyle("-fx-background-radius: 5em; " + "-fx-min-width: 50px; " + "-fx-min-height: 50px; " + "-fx-max-width: 50px; " + "-fx-max-height: 50px;" + "-fx-background-color: white; -fx-stroke: black; -fx-stroke-width: 2;");
                 roundButton.setId("roundedButton");
                 roundButton.setDisable(true);
@@ -73,32 +79,17 @@ public class GameGui extends Application {
                 stack.getChildren().add(roundButton);
                 Connect67.add(stack, j, i);
                 int finalI = j;
-
-
                 roundButton.setOnAction(e -> {
                             GamePlay.currentState = new StateNode();
-                            GamePlay.setChildren(new ArrayList<>());
-                            ArrayList<ArrayList<StateNode>> list = user(Connect67, Integer.parseInt(LevelVal.getText()), finalI, red4Val, yellowVal);
-
-                            list.forEach(state -> {
-                                textArea.appendText("Level= " + (list.indexOf(state)) + "\n");
-                                state.forEach(el -> {
-                                    textArea.appendText("S= " + (state.indexOf(el)) + "\n");
-
-                                    textArea.appendText(buildString(el.color, el.played));
-                                });
-                            });
+                            GamePlay.setChildren(new ArrayList<>(), new ArrayList<>());
+                            user(Connect67, Integer.parseInt(LevelVal.getText()), finalI, red4Val, yellowVal);
                         }
-
                 );
                 stack.setStyle("-fx-background-color:blue;");
                 Connect67.setHgap(.25);
                 Connect67.setVgap(.25);
-
             }
         }
-
-
         ChoiceBox chooseAlgorithm = new ChoiceBox<String>(FXCollections.observableArrayList("without alpha-beta pruning", "with alpha-beta pruning"));
         chooseAlgorithm.setValue("without alpha-beta pruning");
         Platform.runLater(() -> {
@@ -112,28 +103,21 @@ public class GameGui extends Application {
                 }
             }
         });
-
-
         Button start = new Button("Start");
         start.setStyle("-fx-background-color:crimson;-fx-font-size:20px;");
         start.setMinWidth(150);
         Button reset = new Button("Reset");
         reset.setStyle("-fx-background-color:coral;-fx-font-size:20px;");
         reset.setMinWidth(150);
-
         Button trace = new Button("Trace");
         trace.setStyle("-fx-background-color:orange;-fx-font-size:20px;");
         trace.setMinWidth(150);
-
         Button stop = new Button("Exit");
         stop.setStyle("-fx-background-color:red;-fx-font-size:20px;");
         stop.setMinWidth(150);
-
         reset.setDisable(true);
         trace.setDisable(true);
         stop.setDisable(false);
-
-
         start.setOnAction(event -> {
             if (!LevelVal.getText().matches("[0-8]+")) {
                 new Alert(Alert.AlertType.ERROR, "Enter Valid Level integer number >= 0 ").show();
@@ -148,28 +132,29 @@ public class GameGui extends Application {
             chooseAlgorithm.setDisable(true);
             LevelVal.setDisable(true);
         });
-
         reset.setOnAction(event -> {
-            stage.close();
-            start(new Stage());
-            textArea.clear();
+            GamePlay.currentState = new StateNode();
+            GamePlay.moves = 0;
+            GamePlay.setChildren(new ArrayList<>(), new ArrayList<>());
+            bts = new ArrayList<>();
+            start(stage);
+            h = new HashSet<>();
         });
-
-        stop.setOnAction(event -> stage.close());
-        textArea.setMinHeight(500);
-        textArea.setMinWidth(500);
-        textArea.setEditable(false);
-        Button finish = new Button("Return");
-        finish.setStyle("-fx-background-color:green;-fx-font-size:20px;");
-        finish.setMinWidth(150);
-        pane2.add(textArea, 0, 0);
-        pane2.add(finish, 0, 1);
-        Scene scene2 = new Scene(pane2);
+        stop.setOnAction(event -> {
+            stage.close();
+            try {
+                fileWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
         trace.setOnAction(event -> {
-            Stage stage2 = new Stage();
-            stage2.setScene(scene2);
-            stage2.show();
-            finish.setOnAction(e -> stage2.close());
+            try {
+                fileWriter.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            hostServices.showDocument("trace.txt");
         });
         dashboard.add(start, 1, 6);
         dashboard.setHgap(5);
@@ -197,13 +182,24 @@ public class GameGui extends Application {
         stage.show();
     }
 
-    public ArrayList<ArrayList<StateNode>> user(GridPane board, int level, int col, Label r, Label y) {
+    private void makeTrace(ArrayList<ArrayList<boolean[]>> ChildrenPlayed, ArrayList<ArrayList<boolean[]>> ChildrenColor) {
+        printWriter.println("After user move number " + (levels++) + "\n");
+        for (int i = 0; i < ChildrenPlayed.size(); i++) {
+            printWriter.println("State = " + i + "\n");
+            for (int i1 = 0; i1 < ChildrenPlayed.get(i).size(); i1++) {
+                printWriter.println("Action = " + (i1) + "\n");
+                printWriter.println(buildString(ChildrenColor.get(i).get(i1), ChildrenPlayed.get(i).get(i1)));
+            }
+        }
+    }
+
+    public void user(GridPane board, int level, int col, Label r, Label y) {
         StateNode node = GamePlay.userTurn(col);
         Draw(board, node, level, r, y);
         r.setText(String.valueOf(node.getRedPoints()));
         y.setText(String.valueOf(node.getYellowPoints()));
         computer(board, level, r, y);
-        return GamePlay.getChildren();
+        makeTrace(GamePlay.getChildrenPlayedArr(), GamePlay.getChildrenColorArr());
     }
 
     public void computer(GridPane board, int level, Label r, Label y) {
@@ -226,7 +222,6 @@ public class GameGui extends Application {
                 } else {
                     color = "white";
                 }
-                k++;
                 roundButton.setStyle("-fx-background-radius: 5em; " + "-fx-min-width: 50px; " + "-fx-min-height: 50px; " + "-fx-max-width: 50px; " + "-fx-max-height: 50px;" + " -fx-stroke: black; -fx-stroke-width: 2;" + "-fx-background-color:" + color + ";");
                 roundButton.setId("roundedButton");
                 StackPane stack = new StackPane();
@@ -234,15 +229,17 @@ public class GameGui extends Application {
                 board.add(stack, j, 5 - i);
                 int finalI = j;
                 roundButton.setOnAction(e -> {
-                    ArrayList<ArrayList<StateNode>> list = user(board, level, finalI, r, y);
-                    list.forEach(state -> {
-                        textArea.appendText("Level= " + (list.indexOf(state)) + "\n");
-                        state.forEach(el -> {
-                            textArea.appendText("S= " + (state.indexOf(el)) + "\n");
-                            textArea.appendText(buildString(el.color, el.played));
-                        });
-                    });
+                    if (stateNode.played[35 + finalI]) {
+                        h.add(finalI);
+                    }
+                    System.out.println("Completed Columns: " + h.stream().toList());
+                    if (h.contains(finalI)) {
+                        new Alert(Alert.AlertType.WARNING, "THIS COLUMN IS COMPLETED ").show();
+                        return;
+                    }
+                    user(board, level, finalI, r, y);
                 });
+                k++;
                 stack.setStyle("-fx-background-color:blue;");
                 board.setHgap(.25);
                 board.setVgap(.25);
